@@ -25,4 +25,5 @@ module.exports = {
   moduleDirectories: [
     "node_modules"
   ],
+  testMatch: ['**/*.spec.ts'],
 };
