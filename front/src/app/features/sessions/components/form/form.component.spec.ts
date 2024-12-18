@@ -285,4 +285,9 @@ describe('FormComponent', () => {
     fixture.detectChanges();
     expect(submitSpy).toHaveBeenCalled();
   });
+
+  it('should handle sessionForm undefined on submit', () => {
+    component.sessionForm = undefined;
+    expect(() => component.submit()).not.toThrow();
+  });
 });
