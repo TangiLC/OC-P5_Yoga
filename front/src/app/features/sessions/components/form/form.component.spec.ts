@@ -1,13 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormComponent } from './form.component';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { OverlayContainer } from '@angular/cdk/overlay';
-import { SessionApiService } from '../../services/session-api.service';
-import { TeacherService } from '../../../../services/teacher.service';
-import { SessionService } from '../../../../services/session.service';
-import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
-import { of } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +8,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { expect } from '@jest/globals';
+import { FormComponent } from './form.component';
+
+import { SessionApiService } from '../../services/session-api.service';
+import { TeacherService } from '../../../../services/teacher.service';
+import { SessionService } from '../../../../services/session.service';
+import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
+import { of } from 'rxjs';
 
 describe('FormComponent', () => {
   let component: FormComponent;
@@ -119,9 +121,10 @@ describe('FormComponent', () => {
   });
 
   it('should display arrow_back icon and call window.history.back() on click', () => {
-    const routerNavigateSpy  = jest.spyOn(routerMock, 'navigate');
+    const routerNavigateSpy = jest.spyOn(routerMock, 'navigate');
     fixture.detectChanges();
-    const backButton: HTMLElement = fixture.nativeElement.querySelector('button mat-icon');
+    const backButton: HTMLElement =
+      fixture.nativeElement.querySelector('button mat-icon');
     expect(backButton).toBeTruthy();
 
     backButton.click();
@@ -240,13 +243,16 @@ describe('FormComponent', () => {
     (component as any).teachers$ = of(mockTeachers);
     fixture.detectChanges();
     //console.log(fixture.nativeElement.outerHTML);
-    const matSelect: HTMLElement = fixture.nativeElement.querySelector('mat-select');
+    const matSelect: HTMLElement =
+      fixture.nativeElement.querySelector('mat-select');
     expect(matSelect).toBeTruthy();
 
     matSelect.click();
     fixture.detectChanges();
-    const overlayContainerElement = TestBed.inject(OverlayContainer).getContainerElement();
-    const options:NodeListOf<HTMLElement> = overlayContainerElement.querySelectorAll('.mat-option-text');
+    const overlayContainerElement =
+      TestBed.inject(OverlayContainer).getContainerElement();
+    const options: NodeListOf<HTMLElement> =
+      overlayContainerElement.querySelectorAll('.mat-option-text');
 
     expect(options.length).toBe(2);
     expect(options[0].textContent).toContain('John Doe');
@@ -254,7 +260,9 @@ describe('FormComponent', () => {
   });
 
   it('should display a disable save button for empty form and enable submit when filled', () => {
-    const saveButton: HTMLButtonElement = fixture.nativeElement.querySelector('button[type="submit"]');
+    const saveButton: HTMLButtonElement = fixture.nativeElement.querySelector(
+      'button[type="submit"]'
+    );
     expect(saveButton).toBeTruthy();
     const submitSpy = jest.spyOn(component, 'submit');
     fixture.detectChanges();
@@ -277,5 +285,4 @@ describe('FormComponent', () => {
     fixture.detectChanges();
     expect(submitSpy).toHaveBeenCalled();
   });
-
 });

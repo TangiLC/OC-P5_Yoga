@@ -4,21 +4,22 @@ import {
   TestBed,
   tick,
 } from '@angular/core/testing';
-import { DetailComponent } from './detail.component';
+import { expect } from '@jest/globals';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
+import { DetailComponent } from './detail.component';
 import { SessionApiService } from '../../services/session-api.service';
 import { TeacherService } from '../../../../services/teacher.service';
 import { SessionService } from '../../../../services/session.service';
 import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
 import { Session } from '../../interfaces/session.interface';
 import { Teacher } from '../../../../interfaces/teacher.interface';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('DetailComponent', () => {
   let component: DetailComponent;

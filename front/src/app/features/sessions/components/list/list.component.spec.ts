@@ -1,5 +1,5 @@
-import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { expect } from '@jest/globals';
 import { ListComponent } from './list.component';
 import { SessionService } from '../../../../services/session.service';
 import { SessionApiService } from '../../services/session-api.service';
@@ -8,7 +8,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 describe('ListComponent', () => {

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { expect } from '@jest/globals';
 import { AuthService } from './auth.service';
 import { RegisterRequest } from '../interfaces/registerRequest.interface';
 import { LoginRequest } from '../interfaces/loginRequest.interface';

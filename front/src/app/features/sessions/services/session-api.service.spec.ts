@@ -3,6 +3,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
+import { expect } from '@jest/globals';
 import { SessionApiService } from './session-api.service';
 import { Session } from '../interfaces/session.interface';
 
