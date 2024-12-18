@@ -51,15 +51,17 @@ describe('DetailComponent', () => {
     date: new Date('2024-12-17'),
     teacher_id: 1,
     description: 'A relaxing yoga session',
-    users: [1, 2],
+    users: [1, 2, 3],
     createdAt: new Date('2024-12-01'),
     updatedAt: new Date('2024-12-15'),
   };
 
-  const mockTeacher: Partial<Teacher> = {
+  const mockTeacher: Teacher = {
     id: 1,
-    firstName: 'John',
-    lastName: 'Doe',
+    firstName: 'Teacher',
+    lastName: 'MOCK',
+    createdAt: new Date('2020-12-01'),
+    updatedAt: new Date('2022-12-01'),
   };
 
   beforeEach(async () => {
@@ -217,5 +219,25 @@ describe('DetailComponent', () => {
     backButton.click();
 
     expect(backSpy).toHaveBeenCalled();
+  });
+
+  it('should render data correctly in the template', () => {
+    component.session = mockSession;
+    component.teacher = mockTeacher;
+
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const infos = Array.from(compiled.querySelectorAll('.ml1'));
+    expect(infos[1].textContent?.trim()).toBe('Teacher MOCK');
+    expect(infos[2].textContent?.trim()).toBe('3 attendees');
+    expect(infos[3].textContent?.trim()).toBe('December 17, 2024');
+
+    expect(compiled.querySelector('.created')?.textContent?.trim()).toBe(
+      'Created at:  December 1, 2024'
+    );
+    expect(compiled.querySelector('.updated')?.textContent?.trim()).toBe(
+      'Last update:  December 15, 2024'
+    );
   });
 });
