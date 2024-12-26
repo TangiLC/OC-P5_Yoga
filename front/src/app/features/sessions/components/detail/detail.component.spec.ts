@@ -108,111 +108,17 @@ describe('DetailComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
+  // Unit Tests
+  it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch session and teacher details on init', () => {
-    expect(sessionApiServiceMock.detail).toHaveBeenCalledWith('1');
-    expect(teacherServiceMock.detail).toHaveBeenCalledWith('1');
-    expect(component.session).toEqual(mockSession);
-    expect(component.teacher).toEqual(mockTeacher);
-  });
-
-  it('should display the session name in titlecase', () => {
+  it('1️⃣should display the session name in titlecase', () => {
     const title = fixture.nativeElement.querySelector('h1');
     expect(title.textContent).toContain('Yoga Session');
   });
 
-  it('should display delete button and handle delete action for admin only', fakeAsync(() => {
-    sessionServiceMock.sessionInformation!.admin = false;
-    fixture.detectChanges();
-    let deleteButton = fixture.nativeElement.querySelector(
-      'button[color="warn"]'
-    );
-    expect(deleteButton.offsetParent).toBeNull(); //offset => hidden
-
-    sessionServiceMock.sessionInformation!.admin = true;
-    fixture.detectChanges();
-
-    deleteButton = fixture.nativeElement.querySelector('button[color="warn"]');
-    expect(deleteButton).toBeTruthy();
-
-    jest.spyOn(sessionApiServiceMock, 'delete').mockReturnValue(of({}));
-    const routerNavigateSpy = jest.spyOn(routerMock, 'navigate');
-
-    deleteButton.click();
-    tick(3001);
-    fixture.detectChanges();
-
-    expect(sessionApiServiceMock.delete).toHaveBeenCalledWith('1');
-    expect(routerNavigateSpy).toHaveBeenCalledWith(['sessions']);
-  }));
-
-  it('should display Participate button for not enrolled user and handle click', () => {
-    sessionServiceMock.sessionInformation!.admin = true;
-    component.isParticipate = true;
-    fixture.detectChanges();
-
-    let participateButton = fixture.nativeElement.querySelector(
-      'button[color="primary"]'
-    );
-    expect(participateButton).toBeNull();
-
-    component.isAdmin = false;
-    fixture.detectChanges();
-    participateButton = fixture.nativeElement.querySelector(
-      'button[color="primary"]'
-    );
-    expect(participateButton).toBeNull();
-
-    component.isParticipate = false;
-    fixture.detectChanges();
-    participateButton = fixture.nativeElement.querySelector(
-      'button[color="primary"]'
-    );
-    expect(participateButton).toBeTruthy();
-    participateButton.click();
-
-    expect(sessionApiServiceMock.participate).toHaveBeenCalledWith('1', '1');
-    expect(sessionApiServiceMock.detail).toHaveBeenCalled();
-  });
-
-  it('should display unParticipate button for enrolled user and handle click', () => {
-    component.isAdmin = true;
-    component.isParticipate = false;
-    fixture.detectChanges();
-    let unParticipateButton = fixture.nativeElement.querySelector(
-      'button[color="warn"]'
-    );
-    expect(unParticipateButton).toBeTruthy();
-    expect(
-      unParticipateButton.querySelector('span.ml1')?.textContent.trim()
-    ).toBe('Delete');
-
-    component.isAdmin = false;
-    fixture.detectChanges();
-    unParticipateButton = fixture.nativeElement.querySelector(
-      'button[color="warn"]'
-    );
-    expect(unParticipateButton).toBeNull();
-
-    component.isParticipate = true;
-    fixture.detectChanges();
-    unParticipateButton = fixture.nativeElement.querySelector(
-      'button[color="warn"]'
-    );
-    expect(unParticipateButton).toBeTruthy();
-    expect(
-      unParticipateButton.querySelector('span.ml1')?.textContent.trim()
-    ).toBe('Do not participate');
-    unParticipateButton.click();
-    fixture.detectChanges();
-    expect(sessionApiServiceMock.unParticipate).toHaveBeenCalledWith('1', '1');
-    expect(sessionApiServiceMock.detail).toHaveBeenCalled();
-  });
-
-  it('should call window.history.back on back button click', () => {
+  it('1️⃣should call window.history.back on back button click', () => {
     const backSpy = jest.spyOn(window.history, 'back');
     const backButton = fixture.nativeElement.querySelector(
       'button[mat-icon-button]'
@@ -222,7 +128,101 @@ describe('DetailComponent', () => {
     expect(backSpy).toHaveBeenCalled();
   });
 
-  it('should render data correctly in the template', () => {
+  // Integration Tests
+  it('🔄should fetch session and teacher details on init', () => {
+    expect(sessionApiServiceMock.detail).toHaveBeenCalledWith('1');
+    expect(teacherServiceMock.detail).toHaveBeenCalledWith('1');
+    expect(component.session).toEqual(mockSession);
+    expect(component.teacher).toEqual(mockTeacher);
+  });
+
+  it('🔄should display button and handle click based on role and participation', fakeAsync(() => {
+    // Test scenarios
+    const scenarios = [
+      {
+        description: 'Admin user (Delete button)',
+        setup: () => {
+          sessionServiceMock.sessionInformation!.admin = true;
+          component.isAdmin = true;
+          component.isParticipate = false;
+        },
+        expectations: () => {
+          const deleteButton = fixture.nativeElement.querySelector(
+            'button[color="warn"]'
+          );
+          expect(deleteButton).toBeTruthy();
+          expect(
+            deleteButton.querySelector('span.ml1')?.textContent.trim()
+          ).toBe('Delete');
+          deleteButton.click();
+          tick(3001);
+          expect(sessionApiServiceMock.delete).toHaveBeenCalledWith('1');
+          expect(routerMock.navigate).toHaveBeenCalledWith(['sessions']);
+        },
+      },
+      {
+        description: 'Non-enrolled user (Participate button)',
+        setup: () => {
+          sessionServiceMock.sessionInformation!.admin = false;
+          component.isAdmin = false;
+          component.isParticipate = false;
+        },
+        expectations: () => {
+          const participateButton = fixture.nativeElement.querySelector(
+            'button[color="primary"]'
+          );
+          expect(participateButton).toBeTruthy();
+          participateButton.click();
+          expect(sessionApiServiceMock.participate).toHaveBeenCalledWith(
+            '1',
+            '1'
+          );
+          expect(sessionApiServiceMock.detail).toHaveBeenCalled();
+
+          const deleteButton = fixture.nativeElement.querySelector(
+            'button[color="warn"]'
+          );
+          expect(deleteButton?.textContent?.includes('Delete')).toBeFalsy();
+        },
+      },
+      {
+        description: 'Enrolled user (Unparticipate button)',
+        setup: () => {
+          sessionServiceMock.sessionInformation!.admin = false;
+          component.isAdmin = false;
+          component.isParticipate = true;
+        },
+        expectations: () => {
+          const unParticipateButton = fixture.nativeElement.querySelector(
+            'button[color="warn"]'
+          );
+          expect(unParticipateButton).toBeTruthy();
+          expect(
+            unParticipateButton.querySelector('span.ml1')?.textContent.trim()
+          ).toBe('Do not participate');
+          unParticipateButton.click();
+          expect(sessionApiServiceMock.unParticipate).toHaveBeenCalledWith(
+            '1',
+            '1'
+          );
+          expect(sessionApiServiceMock.detail).toHaveBeenCalled();
+          const participateButton = fixture.nativeElement.querySelector(
+            'button[color="primary"]'
+          );
+          expect(participateButton).toBeNull();
+        },
+      },
+    ];
+
+    scenarios.forEach((scenario) => {
+      jest.clearAllMocks();
+      scenario.setup();
+      fixture.detectChanges();
+      scenario.expectations();
+    });
+  }));
+
+  it('🔄should render data correctly in the template', () => {
     component.session = mockSession;
     component.teacher = mockTeacher;
 
@@ -242,3 +242,6 @@ describe('DetailComponent', () => {
     );
   });
 });
+
+// UT : 3/6 = 50%
+// IT : 3/6 = 50%

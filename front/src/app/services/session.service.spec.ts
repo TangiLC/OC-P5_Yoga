@@ -25,54 +25,27 @@ describe('SessionService', () => {
     service = TestBed.inject(SessionService);
   });
 
-  it('should be created', () => {
+  // Unit Tests (1️⃣)
+  it('1️⃣ should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should have isLogged initialized as false', () => {
+  it('1️⃣ should have isLogged initialized as false', () => {
     expect(service.isLogged).toBe(false);
   });
 
-  it('should have sessionInformation initialized as undefined', () => {
+  it('1️⃣ should have sessionInformation initialized as undefined', () => {
     expect(service.sessionInformation).toBeUndefined();
   });
 
-  it('should emit isLogged changes via $isLogged observable', (done) => {
-    service
-      .$isLogged()
-      .pipe(take(1))
-      .subscribe((isLogged) => {
-        expect(isLogged).toBe(service.isLogged);
-        done();
-      });
-    service.logIn(mockUser);
-  });
-
-  it('should set isLogged to true and update sessionInformation on logIn', () => {
+  it('1️⃣ should set isLogged to true and update sessionInformation on logIn', () => {
     service.logIn(mockUser);
 
     expect(service.isLogged).toBe(true);
     expect(service.sessionInformation).toEqual(mockUser);
   });
 
-  it('should emit true via $isLogged on logIn', (done) => {
-    service.logIn(mockUser);
-
-    service
-      .$isLogged()
-      .pipe(take(1))
-      .subscribe({
-        next: (isLogged) => {
-          expect(isLogged).toBe(true);
-          done();
-        },
-        error: (err) => done(err),
-      });
-
-    service.logOut();
-  });
-
-  it('should set isLogged to false and clear sessionInformation on logOut', () => {
+  it('1️⃣ should set isLogged to false and clear sessionInformation on logOut', () => {
     service.logIn(mockUser);
     expect(service.isLogged).toBe(true);
     expect(service.sessionInformation).toEqual(mockUser);
@@ -82,34 +55,55 @@ describe('SessionService', () => {
     expect(service.sessionInformation).toBeUndefined();
   });
 
-  it('should emit false via $isLogged on logOut', (done) => {
+  it('1️⃣ should call next() when logIn is called', () => {
+    const nextSpy = jest.spyOn(service as any, 'next'); // Espionne la méthode privée `next`
     service.logIn(mockUser);
 
+    expect(nextSpy).toHaveBeenCalled();
+  });
+
+  it('1️⃣ should call next() when logOut is called', () => {
+    const nextSpy = jest.spyOn(service as any, 'next'); // Espionne la méthode privée `next`
+    service.logOut();
+
+    expect(nextSpy).toHaveBeenCalled();
+  });
+
+  // Integration Tests (🔄)
+
+  it('🔄 should emit true/false values via $isLogged on logIn/logOut', (done) => {
+    const scenarios = [
+      {
+        action: () => service.logIn(mockUser),
+        expectedValue: true,
+      },
+      {
+        action: () => service.logOut(),
+        expectedValue: false,
+      },
+      {
+        action: () => service.logIn({...mockUser,id:2}),
+        expectedValue: true,
+      },
+    ];
+    let emissionCount = 0;
     service
       .$isLogged()
-      .pipe(skip(1), take(1))
+      .pipe(skip(1), take(scenarios.length))
       .subscribe({
         next: (isLogged) => {
-          expect(isLogged).toBe(false);
-          done();
+          expect(isLogged).toBe(scenarios[emissionCount].expectedValue);
+          emissionCount++;
+          if (emissionCount === scenarios.length) {
+            done();
+          }
         },
         error: (err) => done(err),
       });
 
-    service.logOut();
-  });
-
-  it('should call next() when logIn is called', () => {
-    const nextSpy = jest.spyOn(service as any, 'next'); // Espionne la méthode privée `next`
-    service.logIn(mockUser);
-
-    expect(nextSpy).toHaveBeenCalled();
-  });
-
-  it('should call next() when logOut is called', () => {
-    const nextSpy = jest.spyOn(service as any, 'next'); // Espionne la méthode privée `next`
-    service.logOut();
-
-    expect(nextSpy).toHaveBeenCalled();
+    scenarios.forEach((scenario) => scenario.action());
   });
 });
+
+// UT : 7/8 = 88%
+// IT : 1/8 = 12%

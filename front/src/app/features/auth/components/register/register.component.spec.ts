@@ -52,11 +52,12 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
+  // Unit Tests
+  it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize the form with empty values', () => {
+  it('1️⃣should initialize the form with empty values', () => {
     expect(component.form.value).toEqual({
       email: '',
       firstName: '',
@@ -74,7 +75,7 @@ describe('RegisterComponent', () => {
     expect(submitButton.disabled).toBe(true);
   });
 
-  it('should enable the submit button when the form is valid', () => {
+  it('1️⃣should enable the submit button when the form is valid', () => {
     component.form.setValue({
       email: 'test@example.com',
       firstName: 'Test',
@@ -89,7 +90,27 @@ describe('RegisterComponent', () => {
     expect(submitButton.disabled).toBe(false);
   });
 
-  it('should submit the form and navigate to login on success', () => {
+  it('1️⃣should render placeholders for all inputs', () => {
+    const firstNameInput = fixture.nativeElement.querySelector(
+      'input[formcontrolname="firstName"]'
+    );
+    expect(firstNameInput.getAttribute('data-placeholder')).toBe('First name');
+    const lastNameInput = fixture.nativeElement.querySelector(
+      'input[formcontrolname="lastName"]'
+    );
+    expect(lastNameInput.getAttribute('data-placeholder')).toBe('Last name');
+    const emailInput = fixture.nativeElement.querySelector(
+      'input[formcontrolname="email"]'
+    );
+    expect(emailInput.getAttribute('data-placeholder')).toBe('Email');
+    const passwordInput = fixture.nativeElement.querySelector(
+      'input[formcontrolname="password"]'
+    );
+    expect(passwordInput.getAttribute('data-placeholder')).toBe('Password');
+  });
+
+  // Integration Tests
+  it('🔄should submit the form and navigate to login on success', () => {
     const mockRegisterRequest: RegisterRequest = {
       email: 'test@example.com',
       firstName: 'Test',
@@ -108,8 +129,10 @@ describe('RegisterComponent', () => {
     expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  it('should display an error message on registration failure', () => {
-    authServiceMock.register!.mockReturnValue(throwError(() => new Error('Registration failed')));
+  it('🔄should display an error message on registration failure', () => {
+    authServiceMock.register!.mockReturnValue(
+      throwError(() => new Error('Registration failed'))
+    );
     component.form.setValue({
       email: 'test@example.com',
       firstName: 'Test',
@@ -125,24 +148,7 @@ describe('RegisterComponent', () => {
     expect(errorMessage).toBeTruthy();
     expect(errorMessage.textContent).toContain('An error occurred');
   });
-
-  it('should render placeholders for all inputs', () => {
-    const firstNameInput = fixture.nativeElement.querySelector(
-      'input[formcontrolname="firstName"]'
-    );
-    expect(firstNameInput.getAttribute('data-placeholder')).toBe('First name');
-    const lastNameInput = fixture.nativeElement.querySelector(
-      'input[formcontrolname="lastName"]'
-    );
-    expect(lastNameInput.getAttribute('data-placeholder')).toBe('Last name');
-    const emailInput = fixture.nativeElement.querySelector(
-      'input[formcontrolname="email"]'
-    );
-    expect(emailInput.getAttribute('data-placeholder')).toBe('Email');
-    const passwordInput = fixture.nativeElement.querySelector(
-      'input[formcontrolname="password"]'
-    );
-    expect(passwordInput.getAttribute('data-placeholder')).toBe('Password');
-
-  });
 });
+
+// UT : 4/6 = 67%
+// IT : 2/6 = 33%

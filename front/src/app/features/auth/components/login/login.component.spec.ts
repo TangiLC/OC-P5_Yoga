@@ -54,11 +54,12 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
+  // Unit Tests
+  it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize the form with empty controls', () => {
+  it('1️⃣should initialize the form with empty controls', () => {
     expect(component.form.value).toEqual({ email: '', password: '' });
     expect(component.form.valid).toBe(false);
 
@@ -81,7 +82,7 @@ describe('LoginComponent', () => {
     expect(passwordInput.getAttribute('data-placeholder')).toBe('Password');
   });
 
-  it('should enable the submit button when the form is valid and handle clic', () => {
+  it('1️⃣should enable the submit button when the form is valid and handle click', () => {
     component.form.setValue({
       email: 'test@example.com',
       password: 'password123',
@@ -105,7 +106,7 @@ describe('LoginComponent', () => {
     });
   });
 
-  it('should toggle password visibility on hide-password button click', () => {
+  it('1️⃣should toggle password visibility on hide-password button click', () => {
     const hidePasswordButton = fixture.nativeElement.querySelector(
       'button[aria-label="Hide password"]'
     );
@@ -130,7 +131,7 @@ describe('LoginComponent', () => {
     expect(passwordInput.getAttribute('type')).toBe('password');
   });
 
-  it('should display error message if email is invalid', () => {
+  it('1️⃣should display error message if email is invalid', () => {
     component.form.controls['email'].setValue('invalid-email');
     component.form.controls['email'].markAsTouched();
     fixture.detectChanges();
@@ -141,7 +142,8 @@ describe('LoginComponent', () => {
     expect(emailInput.classList).toContain('ng-invalid');
   });
 
-  it('should submit the form and navigate to sessions on success', () => {
+  // Integration Tests
+  it('🔄should submit the form and navigate to sessions on success', () => {
     const mockSessionInformation: SessionInformation = {
       id: 1,
       username: 'testUser',
@@ -170,7 +172,7 @@ describe('LoginComponent', () => {
     expect(routerMock.navigate).toHaveBeenCalledWith(['/sessions']);
   });
 
-  it('should display an error message on login failure', () => {
+  it('🔄should display an error message on login failure', () => {
     authServiceMock.login!.mockReturnValue(
       throwError(() => new Error('Login failed'))
     );
@@ -193,3 +195,6 @@ describe('LoginComponent', () => {
     expect(errorMessage.textContent).toContain('An error occurred');
   });
 });
+
+// UT : 5/7 = 72%
+// IT : 2/7 = 28%

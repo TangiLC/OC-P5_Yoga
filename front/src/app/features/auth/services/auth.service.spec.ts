@@ -24,12 +24,14 @@ describe('AuthService', () => {
     httpMock.verify();
   });
 
-  it('should be created', () => {
+  // Unit Tests
+  it('1️⃣should be created', () => {
     expect(service).toBeTruthy();
   });
 
+  // Integration Tests
   describe('register', () => {
-    it('should send a POST request to register a user', () => {
+    it('🔄should send a POST request to register a user', () => {
       const mockRegisterRequest: RegisterRequest = {
         firstName: 'Test',
         lastName: 'MOCK',
@@ -47,7 +49,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should send a POST request to login a user', () => {
+    it('🔄should send a POST request to login a user', () => {
       const mockLoginRequest: LoginRequest = {
         email: 'testuser@example.com',
         password: 'password123!',
@@ -74,3 +76,6 @@ describe('AuthService', () => {
     });
   });
 });
+
+// UT : 1/3 = 33%
+// IT : 2/3 = 67%

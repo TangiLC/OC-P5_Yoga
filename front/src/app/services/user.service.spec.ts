@@ -6,6 +6,7 @@ import {
 } from '@angular/common/http/testing';
 import { UserService } from './user.service';
 import { User } from '../interfaces/user.interface';
+import { Observable } from 'rxjs';
 
 describe('UserService', () => {
   let service: UserService;
@@ -16,8 +17,8 @@ describe('UserService', () => {
     firstName: 'Alice',
     lastName: 'Johnson',
     password: 'pass123',
-    createdAt:new Date('2024-12-12'),
-    updatedAt:new Date('2024-12-13'),
+    createdAt: new Date('2024-12-12'),
+    updatedAt: new Date('2024-12-13'),
     email: 'alice.johnson@example.com',
     admin: true,
   };
@@ -33,30 +34,64 @@ describe('UserService', () => {
   });
 
   afterEach(() => {
-    httpMock.verify(); // Vérifie qu'aucune requête HTTP n'est en attente
+    httpMock.verify();
   });
 
-  it('should be created', () => {
+  // Unit Tests
+  it('1️⃣should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch user details by ID', () => {
-    service.getById('1').subscribe((user) => {
-      expect(user).toEqual(mockUser);
-    });
+  it('1️⃣should correctly define API endpoints', () => {
+    const basePath = service['pathService'];
+    expect(basePath).toBe('api/user');
 
-    const req = httpMock.expectOne('api/user/1');
-    expect(req.request.method).toBe('GET');
-    req.flush(mockUser); // Simule la réponse HTTP avec les données mockées
+    const userId = '456';
+    const detailPath = `${basePath}/${userId}`;
+    expect(detailPath).toBe('api/user/456');
   });
 
-  it('should delete a user by ID', () => {
-    service.delete('1').subscribe((response) => {
-      expect(response).toBeTruthy(); // Vérifie que la suppression retourne une réponse
+  // Integration Tests
+  it('🔄should handle user-related API calls', () => {
+    const scenarios: {
+      description: string;
+      method: () => Observable<User>;
+      expectedUrl: string;
+      expectedMethod: string;
+      mockResponse: User | {};
+      validate: any;
+    }[] = [
+      {
+        description: 'fetch user details by ID',
+        method: () => service.getById('1'),
+        expectedUrl: 'api/user/1',
+        expectedMethod: 'GET',
+        mockResponse: mockUser,
+        validate: (response: User) => {
+          expect(response).toEqual(mockUser);
+        },
+      },
+      {
+        description: 'delete user by ID',
+        method: () => service.delete('1'),
+        expectedUrl: 'api/user/1',
+        expectedMethod: 'DELETE',
+        mockResponse: {},
+        validate: (response: any) => {
+          expect(response).toBeTruthy();
+        },
+      },
+    ];
+    scenarios.forEach((scenario) => {
+      scenario.method().subscribe((response) => {
+        scenario.validate(response);
+      });
+      const req = httpMock.expectOne(scenario.expectedUrl);
+      expect(req.request.method).toBe(scenario.expectedMethod);
+      req.flush(scenario.mockResponse);
     });
-
-    const req = httpMock.expectOne('api/user/1');
-    expect(req.request.method).toBe('DELETE');
-    req.flush({}); // Simule une réponse HTTP vide
   });
 });
+
+// UT : 2/3 = 67%
+// IT : 1/3 = 33%

@@ -19,19 +19,24 @@ describe('NotFoundComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  // Unit Tests (UT)
+  it('1️⃣should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have a container with class "flex justify-center mt3"', () => {
+  it('1️⃣should have a container with class "flex justify-center mt3"', () => {
     const container = fixture.debugElement.query(By.css('.flex.justify-center.mt3'));
     expect(container).toBeTruthy();
   });
 
-  it('should render "Page not found !" in an <h1> tag', () => {
+  // Integration Tests (IT)
+  it('🔄should render "Page not found !" in an <h1> tag', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const h1 = compiled.querySelector('h1');
     expect(h1).toBeTruthy();
     expect(h1?.textContent).toContain('Page not found !');
   });
 });
+
+// UT : 2/3 = 66%
+// IT : 1/3 = 33%

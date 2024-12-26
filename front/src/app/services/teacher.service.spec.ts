@@ -1,8 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { expect } from '@jest/globals';
 import { TeacherService } from './teacher.service';
 import { Teacher } from '../interfaces/teacher.interface';
+import { Observable } from 'rxjs';
 
 describe('TeacherService', () => {
   let service: TeacherService;
@@ -12,16 +16,16 @@ describe('TeacherService', () => {
     id: 1,
     firstName: 'John',
     lastName: 'Doe',
-    createdAt:new Date('2020-10-10'),
-    updatedAt:new Date('2021-11-11')
+    createdAt: new Date('2020-10-10'),
+    updatedAt: new Date('2021-11-11'),
   };
 
   const mockTeacher2: Teacher = {
     id: 2,
     firstName: 'Jane',
     lastName: 'Smith',
-    createdAt:new Date('2021-11-11'),
-    updatedAt:new Date('2022-12-12')
+    createdAt: new Date('2021-11-11'),
+    updatedAt: new Date('2022-12-12'),
   };
 
   const mockTeachers: Teacher[] = [mockTeacher1, mockTeacher2];
@@ -40,28 +44,61 @@ describe('TeacherService', () => {
     httpMock.verify();
   });
 
-  it('should be created', () => {
+  // Unit Tests
+  it('1️⃣should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch all teachers', () => {
-    service.all().subscribe((teachers) => {
-      expect(teachers).toEqual(mockTeachers);
-      expect(teachers.length).toBe(2);
-    });
+  it('1️⃣should correctly define API endpoints', () => {
+    const basePath = service['pathService'];
+    expect(basePath).toBe('api/teacher');
 
-    const req = httpMock.expectOne('api/teacher');
-    expect(req.request.method).toBe('GET');
-    req.flush(mockTeachers);
+    const teacherId = '123';
+    const detailPath = `${basePath}/${teacherId}`;
+    expect(detailPath).toBe('api/teacher/123');
   });
 
-  it('should fetch teacher details by ID', () => {
-    service.detail('1').subscribe((teacher) => {
-      expect(teacher).toEqual(mockTeacher1);
-    });
+  // Integration Tests
+  it('🔄should perform API calls to fetch all teachers /or teacher by ID', () => {
+    const scenarios: {
+      description: string;
+      method: () => Observable<Teacher | Teacher[]>;
+      expectedUrl: string;
+      mockResponse: Teacher | Teacher[];
+      validate: any;
+    }[] = [
+      {
+        description: 'fetch all teachers',
+        method: () => service.all(),
+        expectedUrl: 'api/teacher',
+        mockResponse: mockTeachers,
+        validate: (response: Teacher[]) => {
+          expect(response).toEqual(mockTeachers);
+          expect(response.length).toBe(2);
+        },
+      },
+      {
+        description: 'fetch teacher details by ID',
+        method: () => service.detail('1'),
+        expectedUrl: 'api/teacher/1',
+        mockResponse: mockTeacher1,
+        validate: (response: Teacher) => {
+          expect(response).toEqual(mockTeacher1);
+        },
+      },
+    ];
 
-    const req = httpMock.expectOne('api/teacher/1');
-    expect(req.request.method).toBe('GET');
-    req.flush(mockTeacher1);
+    scenarios.forEach((scenario) => {
+      scenario.method().subscribe((response) => {
+        scenario.validate(response);
+      });
+
+      const req = httpMock.expectOne(scenario.expectedUrl);
+      expect(req.request.method).toBe('GET');
+      req.flush(scenario.mockResponse);
+    });
   });
 });
+
+// UT : 2/3 = 67%
+// IT : 1/3 = 33%
