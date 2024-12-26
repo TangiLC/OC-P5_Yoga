@@ -16,7 +16,7 @@ class BadRequestExceptionTest {
 
   @Test
   @DisplayName(
-    "Should correctly instantiate BadRequestException with default message"
+    "<UT>Should correctly instantiate BadRequestException with default message"
   )
   void testDefaultMessage() {
     BadRequestException exception = new BadRequestException();
@@ -35,7 +35,7 @@ class BadRequestExceptionTest {
 
   @Test
   @DisplayName(
-    "Should correctly instantiate BadRequestException with custom message"
+    "<UT>Should correctly instantiate BadRequestException with custom message"
   )
   void testCustomMessage() {
     String customMessage = "This is another custom bad request message";

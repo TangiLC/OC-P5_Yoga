@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 class MessageResponseTest {
 
   @Test
-  @DisplayName("Should instantiate MessageResponse without errors")
+  @DisplayName("<UT>Should instantiate MessageResponse without errors")
   void testInstantiation() {
     MessageResponse messageResponse = new MessageResponse("Test message");
     assertNotNull(messageResponse);
   }
 
   @Test
-  @DisplayName("Should correctly set and get the message using constructor")
+  @DisplayName("<UT>Should correctly set and get the message using constructor")
   void testConstructorAndGetMessage() {
     String expectedMessage = "Constructor message";
 
@@ -25,7 +25,7 @@ class MessageResponseTest {
   }
 
   @Test
-  @DisplayName("Should correctly set and get the message using setter")
+  @DisplayName("<UT>Should correctly set and get the message using setter")
   void testSetMessage() {
     String expectedMessage = "Set/Get message";
 

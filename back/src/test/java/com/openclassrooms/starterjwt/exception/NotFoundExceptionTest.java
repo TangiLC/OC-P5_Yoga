@@ -16,7 +16,7 @@ class NotFoundExceptionTest {
 
   @Test
   @DisplayName(
-    "Should correctly instantiate NotFoundException with default message"
+    "<UT>Should correctly instantiate NotFoundException with default message"
   )
   void testDefaultMessage() {
     NotFoundException exception = new NotFoundException();
@@ -35,7 +35,7 @@ class NotFoundExceptionTest {
 
   @Test
   @DisplayName(
-    "Should correctly instantiate NotFoundException with custom message"
+    "<UT>Should correctly instantiate NotFoundException with custom message"
   )
   void testCustomMessage() {
     String customMessage = "This is another custom not found message";
