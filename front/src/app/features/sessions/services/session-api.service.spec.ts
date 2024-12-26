@@ -47,11 +47,13 @@ describe('SessionApiService', () => {
   });
 
   // Unit Tests
-  it('1️⃣should be created', () => {
+  //@unit-test
+it('1️⃣should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('1️⃣should return an array of sessions for all()', () => {
+  //@unit-test
+it('1️⃣should return an array of sessions for all()', () => {
     service.all().subscribe((sessions) => {
       expect(sessions).toBeInstanceOf(Array);
       expect(sessions[0]).toEqual(mockSession1);
@@ -60,7 +62,8 @@ describe('SessionApiService', () => {
     req.flush(mockSessions);
   });
 
-  it('1️⃣should return a session for detail()', () => {
+  //@unit-test
+it('1️⃣should return a session for detail()', () => {
     service.detail('1').subscribe((session) => {
       expect(session).toBeInstanceOf(Object);
       expect(session).toEqual(mockSession1);
@@ -70,6 +73,7 @@ describe('SessionApiService', () => {
   });
 
   // Integration Tests
+  //@integrat-test
   describe('🔄 API Call Scenarios', () => {
     const scenarios: {
       description: string;

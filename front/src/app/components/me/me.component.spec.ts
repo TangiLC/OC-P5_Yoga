@@ -77,16 +77,17 @@ describe('MeComponent', () => {
   });
 
   // Unit Tests (UT)
+  //@unit-test
   it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
-
+  //@unit-test
   it('1️⃣should call window.history.back() when back() is invoked', () => {
     const historyBackSpy = jest.spyOn(window.history, 'back');
     component.back();
     expect(historyBackSpy).toHaveBeenCalled();
   });
-
+  //@unit-test
   it('1️⃣should delete the user and log out', () => {
     component.delete();
 
@@ -99,7 +100,7 @@ describe('MeComponent', () => {
     expect(mockSessionService.logOut).toHaveBeenCalled();
     expect(routerMock.navigate).toHaveBeenCalledWith(['/']);
   });
-
+  //@unit-test
   it('1️⃣should not display "Delete" button if user is admin', () => {
     component.user = { ...mockUser, admin: true };
     fixture.detectChanges();
@@ -109,7 +110,7 @@ describe('MeComponent', () => {
     );
     expect(deleteButton).toBeNull();
   });
-
+  //@unit-test
   it('1️⃣should display "Delete" button if user is not admin', () => {
     component.user = { ...mockUser, admin: false };
     fixture.detectChanges();
@@ -121,11 +122,12 @@ describe('MeComponent', () => {
   });
 
   // Integration Tests (IT)
+  //@integrat-test
   it('🔄should fetch user data on init', () => {
     expect(userServiceMock.getById).toHaveBeenCalledWith('1');
     expect(component.user).toEqual(mockUser);
   });
-
+  //@integrat-test
   it('🔄should display user information in the template', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const paragraphs = compiled.querySelectorAll('p');

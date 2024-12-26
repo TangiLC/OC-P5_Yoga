@@ -38,11 +38,13 @@ describe('UserService', () => {
   });
 
   // Unit Tests
-  it('1️⃣should be created', () => {
+  //@unit-test
+it('1️⃣should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('1️⃣should correctly define API endpoints', () => {
+  //@unit-test
+it('1️⃣should correctly define API endpoints', () => {
     const basePath = service['pathService'];
     expect(basePath).toBe('api/user');
 
@@ -52,7 +54,8 @@ describe('UserService', () => {
   });
 
   // Integration Tests
-  it('🔄should handle user-related API calls', () => {
+  //@integrat-test
+it('🔄should handle user-related API calls', () => {
     const scenarios: {
       description: string;
       method: () => Observable<User>;

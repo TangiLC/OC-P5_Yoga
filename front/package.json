@@ -10,7 +10,8 @@
     "e2e:ci": "ng run yoga:e2e-ci",
     "e2e:coverage": "npx nyc report --reporter=lcov --reporter=text-summary",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "ratio": "node spec-ratio.js"
   },
   "private": true,
   "dependencies": {
@@ -25,6 +26,7 @@
     "@angular/platform-browser": "14.2.0",
     "@angular/platform-browser-dynamic": "14.2.0",
     "@angular/router": "14.2.0",
+    "glob": "^11.0.0",
     "rxjs": "7.5.6",
     "tslib": "2.4.0",
     "zone.js": "0.11.8"

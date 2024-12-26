@@ -66,11 +66,13 @@ describe('ListComponent', () => {
   });
 
   // Unit Tests
-  it('1️⃣ should create the component', () => {
+  //@unit-test
+it('1️⃣ should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('1️⃣ should fetch sessions on initialization', () => {
+  //@unit-test
+it('1️⃣ should fetch sessions on initialization', () => {
     expect(sessionApiServiceMock.all).toHaveBeenCalled();
     component.sessions$.subscribe((sessions) => {
       expect(sessions).toEqual(mockSessions);
@@ -78,6 +80,7 @@ describe('ListComponent', () => {
   });
 
   // Integration Tests
+  //@integrat-test
   describe('🔄 Button display logic', () => {
     const scenarios = [
       {
@@ -120,7 +123,8 @@ describe('ListComponent', () => {
     });
   });
 
-  it('🔄 should render session details', () => {
+  //@integrat-test
+it('🔄 should render session details', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const sessionTitles = compiled.querySelectorAll('mat-card-title');
     const sessionSubtitles = compiled.querySelectorAll('mat-card-subtitle');

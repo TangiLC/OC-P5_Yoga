@@ -10,9 +10,8 @@ describe('NotFoundComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NotFoundComponent ]
-    })
-    .compileComponents();
+      declarations: [NotFoundComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NotFoundComponent);
     component = fixture.componentInstance;
@@ -20,16 +19,20 @@ describe('NotFoundComponent', () => {
   });
 
   // Unit Tests (UT)
+  //@unit-test
   it('1️⃣should create', () => {
     expect(component).toBeTruthy();
   });
-
+  //@unit-test
   it('1️⃣should have a container with class "flex justify-center mt3"', () => {
-    const container = fixture.debugElement.query(By.css('.flex.justify-center.mt3'));
+    const container = fixture.debugElement.query(
+      By.css('.flex.justify-center.mt3')
+    );
     expect(container).toBeTruthy();
   });
 
   // Integration Tests (IT)
+  //@integrat-test
   it('🔄should render "Page not found !" in an <h1> tag', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const h1 = compiled.querySelector('h1');

@@ -108,11 +108,13 @@ describe('FormComponent', () => {
   });
 
   // Unit Tests
-  it('1️⃣should create the component', () => {
+  //@unit-test
+it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('1️⃣should initialize form with empty values', () => {
+  //@unit-test
+it('1️⃣should initialize form with empty values', () => {
     component['initForm']();
 
     expect(component.sessionForm?.value).toEqual({
@@ -127,12 +129,14 @@ describe('FormComponent', () => {
     expect(component.sessionForm?.get('description')?.hasValidator(Validators.required)).toBeTruthy();
   });
 
-  it('1️⃣should handle sessionForm undefined on submit', () => {
+  //@unit-test
+it('1️⃣should handle sessionForm undefined on submit', () => {
     component.sessionForm = undefined;
     expect(() => component.submit()).not.toThrow();
   });
 
-  it('1️⃣should get teachers$ observable for dropdown list', () => {
+  //@unit-test
+it('1️⃣should get teachers$ observable for dropdown list', () => {
     expect(component.teachers$).toBeDefined();
     const teacherServiceSpy = jest.spyOn(teacherServiceMock, 'all');
     component.teachers$.subscribe(teachers => {
@@ -145,7 +149,8 @@ describe('FormComponent', () => {
   });
 
   // Integration Tests
-  it('🔄 should handle different initialization scenarios correctly', () => {
+  //@integrat-test
+it('🔄 should handle different initialization scenarios correctly', () => {
     const scenarios = [
       {
         description: 'Create mode',
@@ -209,7 +214,8 @@ describe('FormComponent', () => {
     });
   });
 
-  it('🔄 should handle form submissions correctly in different scenarios', () => {
+  //@integrat-test
+it('🔄 should handle form submissions correctly in different scenarios', () => {
     const scenarios = [
       {
         description: 'Create new session',
@@ -310,7 +316,8 @@ describe('FormComponent', () => {
     });
   });
 
-  it('🔄 should display arrow_back icon and call window.history.back() on click', () => {
+  //@integrat-test
+it('🔄 should display arrow_back icon and call window.history.back() on click', () => {
     const routerNavigateSpy = jest.spyOn(routerMock, 'navigate');
     fixture.detectChanges();
     const backButton: HTMLElement =

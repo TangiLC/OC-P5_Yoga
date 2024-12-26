@@ -53,11 +53,13 @@ describe('RegisterComponent', () => {
   });
 
   // Unit Tests
-  it('1️⃣should create the component', () => {
+  //@unit-test
+it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('1️⃣should initialize the form with empty values', () => {
+  //@unit-test
+it('1️⃣should initialize the form with empty values', () => {
     expect(component.form.value).toEqual({
       email: '',
       firstName: '',
@@ -75,7 +77,8 @@ describe('RegisterComponent', () => {
     expect(submitButton.disabled).toBe(true);
   });
 
-  it('1️⃣should enable the submit button when the form is valid', () => {
+  //@unit-test
+it('1️⃣should enable the submit button when the form is valid', () => {
     component.form.setValue({
       email: 'test@example.com',
       firstName: 'Test',
@@ -90,7 +93,8 @@ describe('RegisterComponent', () => {
     expect(submitButton.disabled).toBe(false);
   });
 
-  it('1️⃣should render placeholders for all inputs', () => {
+  //@unit-test
+it('1️⃣should render placeholders for all inputs', () => {
     const firstNameInput = fixture.nativeElement.querySelector(
       'input[formcontrolname="firstName"]'
     );
@@ -110,7 +114,8 @@ describe('RegisterComponent', () => {
   });
 
   // Integration Tests
-  it('🔄should submit the form and navigate to login on success', () => {
+  //@integrat-test
+it('🔄should submit the form and navigate to login on success', () => {
     const mockRegisterRequest: RegisterRequest = {
       email: 'test@example.com',
       firstName: 'Test',
@@ -129,7 +134,8 @@ describe('RegisterComponent', () => {
     expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  it('🔄should display an error message on registration failure', () => {
+  //@integrat-test
+it('🔄should display an error message on registration failure', () => {
     authServiceMock.register!.mockReturnValue(
       throwError(() => new Error('Registration failed'))
     );

@@ -26,26 +26,31 @@ describe('SessionService', () => {
   });
 
   // Unit Tests (1️⃣)
-  it('1️⃣ should be created', () => {
+  //@unit-test
+it('1️⃣ should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('1️⃣ should have isLogged initialized as false', () => {
+  //@unit-test
+it('1️⃣ should have isLogged initialized as false', () => {
     expect(service.isLogged).toBe(false);
   });
 
-  it('1️⃣ should have sessionInformation initialized as undefined', () => {
+  //@unit-test
+it('1️⃣ should have sessionInformation initialized as undefined', () => {
     expect(service.sessionInformation).toBeUndefined();
   });
 
-  it('1️⃣ should set isLogged to true and update sessionInformation on logIn', () => {
+  //@unit-test
+it('1️⃣ should set isLogged to true and update sessionInformation on logIn', () => {
     service.logIn(mockUser);
 
     expect(service.isLogged).toBe(true);
     expect(service.sessionInformation).toEqual(mockUser);
   });
 
-  it('1️⃣ should set isLogged to false and clear sessionInformation on logOut', () => {
+  //@unit-test
+it('1️⃣ should set isLogged to false and clear sessionInformation on logOut', () => {
     service.logIn(mockUser);
     expect(service.isLogged).toBe(true);
     expect(service.sessionInformation).toEqual(mockUser);
@@ -55,23 +60,25 @@ describe('SessionService', () => {
     expect(service.sessionInformation).toBeUndefined();
   });
 
-  it('1️⃣ should call next() when logIn is called', () => {
+  //@unit-test
+it('1️⃣ should call next() when logIn is called', () => {
     const nextSpy = jest.spyOn(service as any, 'next'); // Espionne la méthode privée `next`
     service.logIn(mockUser);
 
     expect(nextSpy).toHaveBeenCalled();
   });
 
-  it('1️⃣ should call next() when logOut is called', () => {
+  //@unit-test
+it('1️⃣ should call next() when logOut is called', () => {
     const nextSpy = jest.spyOn(service as any, 'next'); // Espionne la méthode privée `next`
     service.logOut();
 
     expect(nextSpy).toHaveBeenCalled();
   });
 
-  // Integration Tests (🔄)
-
-  it('🔄 should emit true/false values via $isLogged on logIn/logOut', (done) => {
+  // Integration Tests
+  //@integrat-test
+it('🔄 should emit true/false values via $isLogged on logIn/logOut', (done) => {
     const scenarios = [
       {
         action: () => service.logIn(mockUser),

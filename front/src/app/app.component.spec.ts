@@ -36,17 +36,20 @@ describe('AppComponent', () => {
     fixture.detectChanges();
   });
 
-  it('1️⃣should create the component', () => {
+  //@unit-test
+it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('1️⃣ should logOut and navigate to home when logout() is called', () => {
+  //@unit-test
+it('1️⃣ should logOut and navigate to home when logout() is called', () => {
     component.logout();
     expect(sessionServiceMock.logOut).toHaveBeenCalled();
     expect(routerNavigateSpy).toHaveBeenCalledWith(['']);
   });
 
-  it('🔄should display the links based on login status', () => {
+  //@integrat-test
+it('🔄should display the links based on login status', () => {
     const scenarios = [
       {
         description: 'logged users',
@@ -74,7 +77,8 @@ describe('AppComponent', () => {
     });
   });
 
-  it('🔄should display "Yoga app" on a primary-colored toolbar', () => {
+  //@integrat-test
+it('🔄should display "Yoga app" on a primary-colored toolbar', () => {
     const matToolbar = fixture.debugElement.query(
       By.css('mat-toolbar')
     ).nativeElement;

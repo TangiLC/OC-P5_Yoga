@@ -109,16 +109,19 @@ describe('DetailComponent', () => {
   });
 
   // Unit Tests
-  it('1️⃣should create the component', () => {
+  //@unit-test
+it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('1️⃣should display the session name in titlecase', () => {
+  //@unit-test
+it('1️⃣should display the session name in titlecase', () => {
     const title = fixture.nativeElement.querySelector('h1');
     expect(title.textContent).toContain('Yoga Session');
   });
 
-  it('1️⃣should call window.history.back on back button click', () => {
+  //@unit-test
+it('1️⃣should call window.history.back on back button click', () => {
     const backSpy = jest.spyOn(window.history, 'back');
     const backButton = fixture.nativeElement.querySelector(
       'button[mat-icon-button]'
@@ -129,14 +132,16 @@ describe('DetailComponent', () => {
   });
 
   // Integration Tests
-  it('🔄should fetch session and teacher details on init', () => {
+  //@integrat-test
+it('🔄should fetch session and teacher details on init', () => {
     expect(sessionApiServiceMock.detail).toHaveBeenCalledWith('1');
     expect(teacherServiceMock.detail).toHaveBeenCalledWith('1');
     expect(component.session).toEqual(mockSession);
     expect(component.teacher).toEqual(mockTeacher);
   });
 
-  it('🔄should display button and handle click based on role and participation', fakeAsync(() => {
+  //@integrat-test
+it('🔄should display button and handle click based on role and participation', fakeAsync(() => {
     // Test scenarios
     const scenarios = [
       {
@@ -222,7 +227,8 @@ describe('DetailComponent', () => {
     });
   }));
 
-  it('🔄should render data correctly in the template', () => {
+  //@integrat-test
+it('🔄should render data correctly in the template', () => {
     component.session = mockSession;
     component.teacher = mockTeacher;
 

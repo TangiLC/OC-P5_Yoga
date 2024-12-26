@@ -45,11 +45,13 @@ describe('TeacherService', () => {
   });
 
   // Unit Tests
-  it('1️⃣should be created', () => {
+  //@unit-test
+it('1️⃣should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('1️⃣should correctly define API endpoints', () => {
+  //@unit-test
+it('1️⃣should correctly define API endpoints', () => {
     const basePath = service['pathService'];
     expect(basePath).toBe('api/teacher');
 
@@ -59,7 +61,8 @@ describe('TeacherService', () => {
   });
 
   // Integration Tests
-  it('🔄should perform API calls to fetch all teachers /or teacher by ID', () => {
+  //@integrat-test
+it('🔄should perform API calls to fetch all teachers /or teacher by ID', () => {
     const scenarios: {
       description: string;
       method: () => Observable<Teacher | Teacher[]>;
