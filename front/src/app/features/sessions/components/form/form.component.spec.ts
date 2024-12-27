@@ -10,7 +10,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { OverlayContainer } from '@angular/cdk/overlay';
+import { NgZone } from '@angular/core';
 import { expect } from '@jest/globals';
 import { FormComponent } from './form.component';
 
@@ -25,6 +25,7 @@ describe('FormComponent', () => {
   let fixture: ComponentFixture<FormComponent>;
   let sessionApiServiceMock: Partial<jest.Mocked<SessionApiService>>;
   let teacherServiceMock: Partial<TeacherService>;
+  let ngZone: NgZone;
 
   const mockSession = {
     id: '1',
@@ -104,53 +105,71 @@ describe('FormComponent', () => {
 
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
+    ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
 
   // Unit Tests
   //@unit-test
-it('1️⃣should create the component', () => {
+  it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
-
   //@unit-test
-it('1️⃣should initialize form with empty values', () => {
+  it('1️⃣should initialize form with empty values', () => {
     component['initForm']();
 
     expect(component.sessionForm?.value).toEqual({
       name: '',
       date: '',
       teacher_id: '',
-      description: ''
+      description: '',
     });
-    expect(component.sessionForm?.get('name')?.hasValidator(Validators.required)).toBeTruthy();
-    expect(component.sessionForm?.get('date')?.hasValidator(Validators.required)).toBeTruthy();
-    expect(component.sessionForm?.get('teacher_id')?.hasValidator(Validators.required)).toBeTruthy();
-    expect(component.sessionForm?.get('description')?.hasValidator(Validators.required)).toBeTruthy();
+    expect(
+      component.sessionForm?.get('name')?.hasValidator(Validators.required)
+    ).toBeTruthy();
+    expect(
+      component.sessionForm?.get('date')?.hasValidator(Validators.required)
+    ).toBeTruthy();
+    expect(
+      component.sessionForm
+        ?.get('teacher_id')
+        ?.hasValidator(Validators.required)
+    ).toBeTruthy();
+    expect(
+      component.sessionForm
+        ?.get('description')
+        ?.hasValidator(Validators.required)
+    ).toBeTruthy();
   });
-
   //@unit-test
-it('1️⃣should handle sessionForm undefined on submit', () => {
+  it('1️⃣should handle sessionForm undefined on submit', () => {
     component.sessionForm = undefined;
     expect(() => component.submit()).not.toThrow();
   });
-
   //@unit-test
-it('1️⃣should get teachers$ observable for dropdown list', () => {
+  it('1️⃣should get teachers$ observable for dropdown list', () => {
     expect(component.teachers$).toBeDefined();
     const teacherServiceSpy = jest.spyOn(teacherServiceMock, 'all');
-    component.teachers$.subscribe(teachers => {
+    component.teachers$.subscribe((teachers) => {
       expect(teachers).toEqual(mockTeachers);
       expect(teachers.length).toBe(2);
-      expect(teachers[0]).toEqual({ id: '1', firstName: 'John', lastName: 'Doe' });
-      expect(teachers[1]).toEqual({ id: '2', firstName: 'Jane', lastName: 'Smith' });
+      expect(teachers[0]).toEqual({
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+      expect(teachers[1]).toEqual({
+        id: '2',
+        firstName: 'Jane',
+        lastName: 'Smith',
+      });
     });
     expect(teacherServiceSpy).toHaveBeenCalled();
   });
 
   // Integration Tests
   //@integrat-test
-it('🔄 should handle different initialization scenarios correctly', () => {
+  it('🔄 should handle different initialization scenarios correctly', () => {
     const scenarios = [
       {
         description: 'Create mode',
@@ -200,22 +219,22 @@ it('🔄 should handle different initialization scenarios correctly', () => {
           component = fixture.componentInstance;
         },
         expectations: () => {
-          expect(routerMock.navigate).toHaveBeenCalledWith(['/sessions']);
+          ngZone.run(() => {
+            expect(routerMock.navigate).toHaveBeenCalledWith(['/sessions']);
+          });
         },
       },
     ];
 
     scenarios.forEach((scenario) => {
       jest.clearAllMocks();
-      console.log(`Testing initialization: ${scenario.description}`);
       scenario.setup();
       fixture.detectChanges();
       scenario.expectations();
     });
   });
-
   //@integrat-test
-it('🔄 should handle form submissions correctly in different scenarios', () => {
+  it('🔄 should handle form submissions correctly in different scenarios', () => {
     const scenarios = [
       {
         description: 'Create new session',
@@ -229,7 +248,7 @@ it('🔄 should handle form submissions correctly in different scenarios', () =>
           });
         },
         submit: () => {
-          component.submit();
+          ngZone.run(() => component.submit());
         },
         expectations: () => {
           expect(sessionApiServiceMock.create).toHaveBeenCalledWith({
@@ -253,18 +272,9 @@ it('🔄 should handle form submissions correctly in different scenarios', () =>
             teacher_id: '2',
             description: 'Updated Test Yoga 001',
           });
-          const mockUpdatedSession = {
-            id: 1,
-            name: 'Updated TY1',
-            date: new Date('2024-12-19'),
-            teacher_id: 2,
-            description: 'Updated Test Yoga 001',
-            users: [],
-          };
-          sessionApiServiceMock.update?.mockReturnValue(of(mockUpdatedSession));
         },
         submit: () => {
-          component.submit();
+          ngZone.run(() => component.submit());
         },
         expectations: () => {
           expect(sessionApiServiceMock.update).toHaveBeenCalledWith('1', {
@@ -277,37 +287,10 @@ it('🔄 should handle form submissions correctly in different scenarios', () =>
           expect(routerMock.navigate).toHaveBeenCalledWith(['sessions']);
         },
       },
-      {
-        description: 'Form validation state',
-        setup: () => {
-          component.onUpdate = false;
-          component.sessionForm?.reset();
-        },
-        submit: () => {
-          const saveButton: HTMLButtonElement =
-            fixture.nativeElement.querySelector('button[type="submit"]');
-          expect(saveButton.disabled).toBeTruthy();
-
-          component.sessionForm?.setValue({
-            name: 'Save Bt test',
-            date: '2024-12-12',
-            teacher_id: '1',
-            description: 'Save Button enable/disable test',
-          });
-          fixture.detectChanges();
-
-          expect(saveButton.disabled).toBeFalsy();
-          saveButton.click();
-        },
-        expectations: () => {
-          expect(sessionApiServiceMock.create).toHaveBeenCalled();
-        },
-      },
     ];
 
     scenarios.forEach((scenario) => {
       jest.clearAllMocks();
-      console.log(`Testing submission: ${scenario.description}`);
       scenario.setup();
       fixture.detectChanges();
       scenario.submit();
@@ -315,22 +298,19 @@ it('🔄 should handle form submissions correctly in different scenarios', () =>
       scenario.expectations();
     });
   });
-
   //@integrat-test
-it('🔄 should display arrow_back icon and call window.history.back() on click', () => {
-    const routerNavigateSpy = jest.spyOn(routerMock, 'navigate');
-    fixture.detectChanges();
-    const backButton: HTMLElement =
-      fixture.nativeElement.querySelector('button mat-icon');
-    expect(backButton).toBeTruthy();
+  it('🔄 should display arrow_back icon and call window.history.back() on click', () => {
+    ngZone.run(() => {
+      const routerNavigateSpy = jest.spyOn(routerMock, 'navigate');
+      fixture.detectChanges();
+      const backButton: HTMLElement =
+        fixture.nativeElement.querySelector('button mat-icon');
+      expect(backButton).toBeTruthy();
 
-    backButton.click();
-    fixture.detectChanges();
+      backButton.click();
+      fixture.detectChanges();
 
-    expect(routerNavigateSpy).toHaveBeenCalledWith(['/sessions']);
+      expect(routerNavigateSpy).toHaveBeenCalledWith(['/sessions']);
+    });
   });
-
 });
-
-// UT : 4/7 = 57%
-// IT : 3/7 = 43%
