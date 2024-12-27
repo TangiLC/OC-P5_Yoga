@@ -76,22 +76,19 @@ describe('MeComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
+  // Unit Tests (UT)
+  //@unit-test
+  it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should fetch user data on init', () => {
-    expect(userServiceMock.getById).toHaveBeenCalledWith('1');
-    expect(component.user).toEqual(mockUser);
-  });
-
-  it('should call window.history.back() when back() is invoked', () => {
+  //@unit-test
+  it('1️⃣should call window.history.back() when back() is invoked', () => {
     const historyBackSpy = jest.spyOn(window.history, 'back');
     component.back();
     expect(historyBackSpy).toHaveBeenCalled();
   });
-
-  it('should delete the user and log out', () => {
+  //@unit-test
+  it('1️⃣should delete the user and log out', () => {
     component.delete();
 
     expect(userServiceMock.delete).toHaveBeenCalledWith('1');
@@ -103,8 +100,35 @@ describe('MeComponent', () => {
     expect(mockSessionService.logOut).toHaveBeenCalled();
     expect(routerMock.navigate).toHaveBeenCalledWith(['/']);
   });
+  //@unit-test
+  it('1️⃣should not display "Delete" button if user is admin', () => {
+    component.user = { ...mockUser, admin: true };
+    fixture.detectChanges();
 
-  it('should display user information in the template', () => {
+    const deleteButton = fixture.debugElement.query(
+      By.css('button[color="warn"]')
+    );
+    expect(deleteButton).toBeNull();
+  });
+  //@unit-test
+  it('1️⃣should display "Delete" button if user is not admin', () => {
+    component.user = { ...mockUser, admin: false };
+    fixture.detectChanges();
+
+    const deleteButton = fixture.debugElement.query(
+      By.css('button[color="warn"]')
+    );
+    expect(deleteButton).toBeTruthy();
+  });
+
+  // Integration Tests (IT)
+  //@integrat-test
+  it('🔄should fetch user data on init', () => {
+    expect(userServiceMock.getById).toHaveBeenCalledWith('1');
+    expect(component.user).toEqual(mockUser);
+  });
+  //@integrat-test
+  it('🔄should display user information in the template', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const paragraphs = compiled.querySelectorAll('p');
     const longDate = new Date().toLocaleDateString('en-US', {
@@ -120,24 +144,7 @@ describe('MeComponent', () => {
     expect(paragraphs[3].textContent).toContain(`Created at:  ${longDate}`);
     expect(paragraphs[4].textContent).toContain(`Last update:  ${longDate}`);
   });
-
-  it('should display "Delete" button if user is not admin', () => {
-    component.user = { ...mockUser, admin: false };
-    fixture.detectChanges();
-
-    const deleteButton = fixture.debugElement.query(
-      By.css('button[color="warn"]')
-    );
-    expect(deleteButton).toBeTruthy();
-  });
-
-  it('should not display "Delete" button if user is admin', () => {
-    component.user = { ...mockUser, admin: true };
-    fixture.detectChanges();
-
-    const deleteButton = fixture.debugElement.query(
-      By.css('button[color="warn"]')
-    );
-    expect(deleteButton).toBeNull();
-  });
 });
+
+//UT : 5/7 = 72%
+//IT : 2/7 = 28%

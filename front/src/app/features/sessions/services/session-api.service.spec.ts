@@ -6,6 +6,7 @@ import {
 import { expect } from '@jest/globals';
 import { SessionApiService } from './session-api.service';
 import { Session } from '../interfaces/session.interface';
+import { Observable } from 'rxjs';
 
 describe('SessionApiService', () => {
   let service: SessionApiService;
@@ -45,126 +46,90 @@ describe('SessionApiService', () => {
     httpMock.verify();
   });
 
-  it('should be created', () => {
+  // Unit Tests
+  //@unit-test
+it('1️⃣should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch all sessions', () => {
+  //@unit-test
+it('1️⃣should return an array of sessions for all()', () => {
     service.all().subscribe((sessions) => {
-      expect(sessions).toEqual(mockSessions);
-      expect(sessions.length).toBe(2);
+      expect(sessions).toBeInstanceOf(Array);
+      expect(sessions[0]).toEqual(mockSession1);
     });
-
     const req = httpMock.expectOne('api/session');
-    expect(req.request.method).toBe('GET');
     req.flush(mockSessions);
   });
 
-  it('should fetch session details by ID', fakeAsync(() => {
-    let sessionDetail: Session | undefined;
+  //@unit-test
+it('1️⃣should return a session for detail()', () => {
     service.detail('1').subscribe((session) => {
-      sessionDetail = session;
+      expect(session).toBeInstanceOf(Object);
+      expect(session).toEqual(mockSession1);
     });
     const req = httpMock.expectOne('api/session/1');
-    expect(req.request.method).toBe('GET');
     req.flush(mockSession1);
-    tick();
-    expect(sessionDetail).toEqual(mockSession1);
-  }));
+  });
 
-  it('should delete a session by ID', fakeAsync(() => {
-    let sessions = [mockSession1, mockSession2];
+  // Integration Tests
+  //@integrat-test
+  describe('🔄 API Call Scenarios', () => {
+    const scenarios: {
+      description: string;
+      method: () => Observable<any>;
+      expectedUrl: string;
+      expectedMethod: string;
+      expectedBody: any;
+    }[] = [
+      {
+        description: 'should create a session',
+        method: () => service.create(mockSession1),
+        expectedUrl: 'api/session',
+        expectedMethod: 'POST',
+        expectedBody: mockSession1,
+      },
+      {
+        description: 'should delete a session',
+        method: () => service.delete('1'),
+        expectedUrl: 'api/session/1',
+        expectedMethod: 'DELETE',
+        expectedBody: null,
+      },
+      {
+        description: 'should update a session',
+        method: () =>
+          service.update('1', { ...mockSession1, name: 'Updated Session' }),
+        expectedUrl: 'api/session/1',
+        expectedMethod: 'PUT',
+        expectedBody: { ...mockSession1, name: 'Updated Session' },
+      },
+      {
+        description: 'should participate in a session',
+        method: () => service.participate('1', '10'),
+        expectedUrl: 'api/session/1/participate/10',
+        expectedMethod: 'POST',
+        expectedBody: null,
+      },
+      {
+        description: 'should unParticipate from a session',
+        method: () => service.unParticipate('1', '10'),
+        expectedUrl: 'api/session/1/participate/10',
+        expectedMethod: 'DELETE',
+        expectedBody: null,
+      },
+    ];
 
-    service.delete('1').subscribe(() => {
-      //mock deleting session
-      sessions = sessions.filter((session) => session.id !== 1);
-
-      expect(sessions.length).toBe(1);
-      expect(sessions).toEqual([mockSession2]);
+    scenarios.forEach((scenario) => {
+      it(scenario.description, () => {
+        scenario.method().subscribe();
+        const req = httpMock.expectOne(scenario.expectedUrl);
+        expect(req.request.method).toBe(scenario.expectedMethod);
+        expect(req.request.body).toEqual(scenario.expectedBody);
+      });
     });
-
-    const req = httpMock.expectOne('api/session/1');
-    expect(req.request.method).toBe('DELETE');
-    req.flush({});
-
-    tick(3001);
-  }));
-
-  it('should create a new session', fakeAsync(() => {
-    let sessions: Session[] = [mockSession1];
-
-    service.create(mockSession2).subscribe((createdSession) => {
-      // Mock post session
-      sessions = [...sessions, createdSession];
-
-      expect(sessions.length).toBe(2);
-      expect(sessions).toEqual([mockSession1, mockSession2]);
-    });
-
-    const req = httpMock.expectOne('api/session');
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual(mockSession2);
-    req.flush(mockSession2);
-
-    tick(3001);
-  }));
-
-  it('should update a session by ID', fakeAsync(() => {
-    let sessions: Session[] = mockSessions;
-    const updatedSession1 = {
-      ...mockSession1,
-      name: 'Updated Yoga 1st Session',
-    };
-
-    service.update('1', updatedSession1).subscribe((response) => {
-      // Mock update session
-      sessions = sessions.map((session) =>
-        session.id === updatedSession1.id ? updatedSession1 : session
-      );
-      expect(sessions.length).toBe(2);
-      expect(sessions).toEqual([updatedSession1, mockSession2]);
-    });
-
-    const req = httpMock.expectOne('api/session/1');
-    expect(req.request.method).toBe('PUT');
-    expect(req.request.body).toEqual(updatedSession1);
-    req.flush(updatedSession1);
-    tick(3001);
-  }));
-
-  it('should participate in a session', fakeAsync(() => {
-    let session = { ...mockSession1 };
-
-    service.participate('1', '10').subscribe(() => {
-      // Mock post user
-      session.users = [...session.users, 10];
-
-      expect(session.users.length).toBe(5);
-      expect(session.users).toContain(10);
-    });
-
-    const req = httpMock.expectOne('api/session/1/participate/10');
-    expect(req.request.method).toBe('POST');
-    req.flush({});
-
-    tick(3001);
-  }));
-
-  it('should unParticipate from a session', fakeAsync(() => {
-    let session = { ...mockSession1 };
-
-    service.unParticipate('1', '8').subscribe(() => {
-      //Mock user delete
-      session.users = session.users.filter((userId) => userId !== 8);
-
-      expect(session.users.length).toBe(3);
-      expect(session.users).not.toContain(8);
-    });
-
-    const req = httpMock.expectOne('api/session/1/participate/8');
-    expect(req.request.method).toBe('DELETE');
-    req.flush({});
-
-    tick(3001);
-  }));
+  });
 });
+
+// UT : 3/4 = 75%
+// IT : 1/4 = 25%

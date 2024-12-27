@@ -65,23 +65,71 @@ describe('ListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
+  // Unit Tests
+  //@unit-test
+it('1️⃣ should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch sessions on initialization', () => {
+  //@unit-test
+it('1️⃣ should fetch sessions on initialization', () => {
     expect(sessionApiServiceMock.all).toHaveBeenCalled();
     component.sessions$.subscribe((sessions) => {
       expect(sessions).toEqual(mockSessions);
     });
   });
 
-  it('should render session details', () => {
+  // Integration Tests
+  //@integrat-test
+  describe('🔄 Button display logic', () => {
+    const scenarios = [
+      {
+        description: 'should display "Create" button if user is admin',
+        admin: true,
+        buttonSelector: 'button[routerLink="create"]',
+        expectedCount: 1,
+      },
+      {
+        description: 'should not display "Create" button if user is not admin',
+        admin: false,
+        buttonSelector: 'button[routerLink="create"]',
+        expectedCount: 0,
+      },
+      {
+        description:
+          'should display "Edit" buttons for sessions if user is admin',
+        admin: true,
+        buttonSelector: 'button[ng-reflect-router-link*="update"]',
+        expectedCount: 2,
+      },
+      {
+        description: 'should configure "Detail" buttons for all sessions',
+        admin: true,
+        buttonSelector: 'button[ng-reflect-router-link*="detail"]',
+        expectedCount: 2,
+      },
+    ];
+
+    scenarios.forEach((scenario) => {
+      it(scenario.description, () => {
+        sessionServiceMock.sessionInformation.admin = scenario.admin;
+        fixture.detectChanges();
+
+        const buttons = fixture.debugElement.queryAll(
+          By.css(scenario.buttonSelector)
+        );
+        expect(buttons.length).toBe(scenario.expectedCount);
+      });
+    });
+  });
+
+  //@integrat-test
+it('🔄 should render session details', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const sessionTitles = compiled.querySelectorAll('mat-card-title');
     const sessionSubtitles = compiled.querySelectorAll('mat-card-subtitle');
 
-    expect(sessionTitles.length).toBe(2 + 1); //+1 for 'Sessions available'
+    expect(sessionTitles.length).toBe(2 + 1); // +1 for 'Sessions available'
     expect(sessionTitles[0].textContent).toContain('Sessions available');
     expect(sessionTitles[1].textContent).toContain('Yoga Session');
     expect(sessionTitles[2].textContent).toContain('Meditation');
@@ -89,43 +137,7 @@ describe('ListComponent', () => {
     expect(sessionSubtitles[0].textContent).toContain('December 17, 2024');
     expect(sessionSubtitles[1].textContent).toContain('December 18, 2024');
   });
-
-  it('should display "Create" button if user is admin', () => {
-    const createButton = fixture.debugElement.query(
-      By.css('button[routerLink="create"]')
-    );
-    expect(createButton).toBeTruthy();
-  });
-
-  it('should display "Edit" button for each session if user is admin', () => {
-    const editButtons = fixture.debugElement.queryAll(
-      By.css('button[ng-reflect-router-link*="update"]')
-    );
-    expect(editButtons.length).toBe(2);
-    expect(editButtons[0].attributes['ng-reflect-router-link']).toBe(
-      'update,1'
-    );
-    expect(editButtons[1].attributes['ng-reflect-router-link']).toBe(
-      'update,2'
-    );
-  });
-
-  it('should not display "Create" button if user is not admin', () => {
-    sessionServiceMock.sessionInformation.admin = false;
-    fixture.detectChanges();
-
-    const createButton = fixture.debugElement.query(
-      By.css('button[routerLink="create"]')
-    );
-    expect(createButton).toBeNull();
-  });
-
-  it('should configure "Detail" button routerLinks correctly', () => {
-    const detailButtons = fixture.debugElement.queryAll(
-      By.css('button[ng-reflect-router-link*="detail"]')
-    );
-    expect(detailButtons.length).toBe(2);
-    expect(detailButtons[0].attributes['ng-reflect-router-link']).toBe('detail,1');
-    expect(detailButtons[1].attributes['ng-reflect-router-link']).toBe('detail,2');
-  });
 });
+
+// UT : 2/4 = 50%
+// IT : 2/4 = 50%

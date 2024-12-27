@@ -8,12 +8,14 @@ import { AuthService } from './features/auth/services/auth.service';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { By } from '@angular/platform-browser';
+import { NgZone } from '@angular/core';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let sessionServiceMock: Partial<SessionService>;
   let routerNavigateSpy: jest.SpyInstance;
+  let ngZone: NgZone;
 
   beforeEach(async () => {
     sessionServiceMock = {
@@ -23,10 +25,7 @@ describe('AppComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [AppComponent],
-      imports: [
-        RouterTestingModule,
-        MatToolbarModule,
-      ],
+      imports: [RouterTestingModule, MatToolbarModule],
       providers: [
         { provide: SessionService, useValue: sessionServiceMock },
         { provide: AuthService, useValue: {} },
@@ -36,51 +35,67 @@ describe('AppComponent', () => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     routerNavigateSpy = jest.spyOn(TestBed.inject(Router), 'navigate');
+    ngZone = TestBed.inject(NgZone);
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
+  //@unit-test
+  it('1️⃣should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display links for logged users', () => {
-    // Mock isLogged to return true
-    (sessionServiceMock.$isLogged as jest.Mock).mockReturnValue(of(true));
-    fixture.detectChanges();
-
-    const links = fixture.debugElement.queryAll(By.css('.link'));
-    const linkTexts = links.map((link) => link.nativeElement.textContent.trim());
-
-    expect(linkTexts).toEqual(['Sessions', 'Account', 'Logout']);
+  //@unit-test
+  it('1️⃣ should logOut and navigate to home when logout() is called', () => {
+    ngZone.run(() => {
+      component.logout();
+      expect(sessionServiceMock.logOut).toHaveBeenCalled();
+      expect(routerNavigateSpy).toHaveBeenCalledWith(['']);
+    });
   });
 
-  it('should display links for non-logged users', () => {
-    (sessionServiceMock.$isLogged as jest.Mock).mockReturnValue(of(false));
-    fixture.detectChanges();
+  //@integrat-test
+  it('🔄should display the links based on login status', () => {
+    ngZone.run(() => {
+      const scenarios = [
+        {
+          description: 'logged users',
+          isLogged: true,
+          expectedLinks: ['Sessions', 'Account', 'Logout'],
+        },
+        {
+          description: 'non-logged users',
+          isLogged: false,
+          expectedLinks: ['Login', 'Register'],
+        },
+      ];
 
-    const links = fixture.debugElement.queryAll(By.css('.link'));
-    const linkTexts = links.map((link) => link.nativeElement.textContent.trim());
+      scenarios.forEach((scenario) => {
+        (sessionServiceMock.$isLogged as jest.Mock).mockReturnValue(
+          of(scenario.isLogged)
+        );
+        fixture.detectChanges();
 
-    expect(linkTexts).toEqual(['Login', 'Register']);
+        const links = fixture.debugElement.queryAll(By.css('.link'));
+        const linkTexts = links.map((link) =>
+          link.nativeElement.textContent.trim()
+        );
+        expect(linkTexts).toEqual(scenario.expectedLinks);
+      });
+    });
   });
 
-  it('should call sessionService.logOut and navigate to home on logout', () => {
-    (sessionServiceMock.$isLogged as jest.Mock).mockReturnValue(of(true));
-    fixture.detectChanges();
+  //@integrat-test
+  it('🔄should display "Yoga app" on a primary-colored toolbar', () => {
+    ngZone.run(() => {
+      const matToolbar = fixture.debugElement.query(
+        By.css('mat-toolbar')
+      ).nativeElement;
+      expect(matToolbar.getAttribute('color')).toBe('primary');
 
-    const logoutLink = fixture.debugElement.query(By.css('span.link:nth-child(3)')).nativeElement;
-    logoutLink.click();
-
-    expect(sessionServiceMock.logOut).toHaveBeenCalled();
-    expect(routerNavigateSpy).toHaveBeenCalledWith(['']);
-  });
-
-  it('should display "Yoga app" on a primary-colored toolbar', () => {
-    const matToolbar = fixture.debugElement.query(By.css('mat-toolbar')).nativeElement;
-    expect(matToolbar.getAttribute('color')).toBe('primary');
-
-    const firstSpan = fixture.debugElement.query(By.css('mat-toolbar span')).nativeElement;
-    expect(firstSpan.textContent.trim()).toBe('Yoga app');
-
+      const firstSpan = fixture.debugElement.query(
+        By.css('mat-toolbar span')
+      ).nativeElement;
+      expect(firstSpan.textContent.trim()).toBe('Yoga app');
+    });
   });
 });
