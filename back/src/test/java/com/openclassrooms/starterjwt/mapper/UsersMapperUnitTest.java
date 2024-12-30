@@ -7,6 +7,8 @@ import com.openclassrooms.starterjwt.models.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -84,6 +86,7 @@ class UsersMapperTest {
 
   @ParameterizedTest
   @MethodSource("toDtoListTestCases")
+  @DisplayName("Should map correctly toDto List")
   void toDtoList_ShouldMapCorrectly(
     List<User> users,
     List<UserDto> expectedUserDtos
@@ -110,6 +113,7 @@ class UsersMapperTest {
 
   @ParameterizedTest
   @MethodSource("toEntityListTestCases")
+  @DisplayName("Should map correctly toEntity List")
   void toEntityList_ShouldMapCorrectly(
     List<UserDto> userDtos,
     List<User> expectedUsers

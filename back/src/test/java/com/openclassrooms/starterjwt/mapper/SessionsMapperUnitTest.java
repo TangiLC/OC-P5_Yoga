@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -22,6 +24,7 @@ class SessionsMapperTest {
   private static final LocalDateTime TEST_DATETIME = LocalDateTime.now();
 
   @Test
+  @DisplayName("Should map correctly toDto List")
   void toDtoList_ShouldMapCorrectly() {
     List<Session> sessions = List.of(
       createFullSession(1L, "Session 1", "Description 1"),

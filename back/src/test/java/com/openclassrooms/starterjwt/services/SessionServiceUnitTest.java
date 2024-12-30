@@ -61,6 +61,7 @@ class SessionServiceTest {
     );
   }
 
+  @SuppressWarnings("null")
   @ParameterizedTest
   @MethodSource("participateTestCases")
   @DisplayName("Should handle different scenarios for 'participate' method")
