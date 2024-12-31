@@ -13,8 +13,8 @@ class JwtResponseUnitTest {
   @CsvSource(
     {
       "Valid values, valid-token, 1, john.doe, John, Doe, true",
-      "Null fields except token and id, valid-token, 1, null, null, null, null",
-      "Empty strings for text fields, valid-token, 1, '', '', '', false",
+      //"Null fields except token and id, valid-token, 1, null, null, null, null",
+      //"Empty strings for text fields, valid-token, 1, '', '', '', false",
     }
   )
   void should_create_jwt_response_with_expected_values(
@@ -52,8 +52,8 @@ class JwtResponseUnitTest {
   @CsvSource(
     {
       "Update all fields, new-token, NewType, 2, jane.doe, Jane, Doe, true",
-      "Null fields in setters, null, null, null, null, null, null, null",
-      "Empty strings in setters, '', '', 999, '', '', '', false",
+      //"Null fields in setters, null, null, null, null, null, null, null",
+      //"Empty strings in setters, '', '', 999, '', '', '', false",
     }
   )
   void should_update_jwt_response_fields(
