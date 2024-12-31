@@ -9,7 +9,6 @@ import com.openclassrooms.starterjwt.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -207,7 +206,7 @@ public class SessionControllerIntegrationTest {
     session.setName("Session with Participants");
     session.setDescription("Session to test participation.");
     session.setDate(new Date());
-    session.setUsers(List.of(existingUser));
+    session.setUsers(new ArrayList<>(List.of(existingUser)));
     sessionRepository.save(session);
 
     User newUser = new User();
@@ -240,6 +239,38 @@ public class SessionControllerIntegrationTest {
       .perform(
         MockMvcRequestBuilders
           .post("/api/session/" + sessionId + "/participate/" + userId)
+          .contentType(MediaType.APPLICATION_JSON)
+      )
+      .andReturn();
+
+    int status = result.getResponse().getStatus();
+
+    assertThat(status).isEqualTo(expectedStatus);
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+    {
+      "1, 1, 200", // Successfully remove user 1 from session 1
+      //"1, 2, 404", // Fail to remove : User not participating in session->400
+      "1, invalid, 400", // Fail to remove : Invalid user ID format
+      "999, 1, 404", // Fail to remove : Session not found
+    }
+    //TO DO : rejection logic ?
+  )
+  @WithMockUser
+  @DisplayName(
+    "Should handle noLongerParticipate scenarios and return appropriate status"
+  )
+  void testNoLongerParticipate_Scenarios(
+    String sessionId,
+    String userId,
+    int expectedStatus
+  ) throws Exception {
+    MvcResult result = mockMvc
+      .perform(
+        MockMvcRequestBuilders
+          .delete("/api/session/" + sessionId + "/participate/" + userId)
           .contentType(MediaType.APPLICATION_JSON)
       )
       .andReturn();

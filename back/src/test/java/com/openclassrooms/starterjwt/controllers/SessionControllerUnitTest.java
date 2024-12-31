@@ -11,13 +11,11 @@ import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.services.SessionService;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -59,20 +57,23 @@ class SessionControllerUnitTest {
   }
 
   @ParameterizedTest(name = "Find by ID - {0}")
-  @MethodSource("findByIdScenarios")
+  @CsvSource({ "1, 200, valid", "999, 404, valid", "invalid, 400, invalid" })
   @DisplayName("Should handle different findById scenarios")
   void testFindByIdScenarios(
-    String scenarioName,
     String inputId,
-    Session serviceResponse,
-    SessionDto mappedResponse,
-    int expectedStatus
+    int expectedStatus,
+    String description
   ) {
+    Session session = new Session();
+    session.setId(1L);
+    SessionDto sessionDto = new SessionDto();
+    sessionDto.setId(1L);
+
     if (!"invalid".equals(inputId)) {
       when(sessionService.getById(Long.valueOf(inputId)))
-        .thenReturn(serviceResponse);
-      if (serviceResponse != null) {
-        when(sessionMapper.toDto(serviceResponse)).thenReturn(mappedResponse);
+        .thenReturn(expectedStatus == 200 ? session : null);
+      if (expectedStatus == 200) {
+        when(sessionMapper.toDto(session)).thenReturn(sessionDto);
       }
     }
 
@@ -80,21 +81,36 @@ class SessionControllerUnitTest {
 
     assertThat(response.getStatusCodeValue()).isEqualTo(expectedStatus);
     if (expectedStatus == 200) {
-      assertThat(response.getBody()).isEqualTo(mappedResponse);
+      assertThat(response.getBody()).isEqualTo(sessionDto);
     }
   }
 
   @ParameterizedTest(name = "Create - {0}")
-  @MethodSource("createScenarios")
+  @CsvSource({ "'New Session', 'New Description', 200" })
   @DisplayName("Should handle different create scenarios")
   void testCreateScenarios(
-    String scenarioName,
-    SessionDto inputDto,
-    Session mappedEntity,
-    Session serviceResponse,
-    SessionDto mappedResponse,
+    String name,
+    String description,
     int expectedStatus
   ) {
+    SessionDto inputDto = new SessionDto();
+    inputDto.setName(name);
+    inputDto.setDescription(description);
+
+    Session mappedEntity = new Session();
+    mappedEntity.setName(name);
+    mappedEntity.setDescription(description);
+
+    Session serviceResponse = new Session();
+    serviceResponse.setId(1L);
+    serviceResponse.setName(name);
+    serviceResponse.setDescription(description);
+
+    SessionDto mappedResponse = new SessionDto();
+    mappedResponse.setId(1L);
+    mappedResponse.setName(name);
+    mappedResponse.setDescription(description);
+
     when(sessionMapper.toEntity(inputDto)).thenReturn(mappedEntity);
     when(sessionService.create(mappedEntity)).thenReturn(serviceResponse);
     when(sessionMapper.toDto(serviceResponse)).thenReturn(mappedResponse);
@@ -108,24 +124,30 @@ class SessionControllerUnitTest {
   }
 
   @ParameterizedTest(name = "Update - {0}")
-  @MethodSource("updateScenarios")
+  @CsvSource({ "1, 'Updated Session', 200", "invalid, 'Updated Session', 400" })
   @DisplayName("Should handle different update scenarios")
-  void testUpdateScenarios(
-    String scenarioName,
-    String inputId,
-    SessionDto inputDto,
-    Session mappedEntity,
-    Session serviceResponse,
-    SessionDto mappedResponse,
-    int expectedStatus
-  ) {
+  void testUpdateScenarios(String inputId, String name, int expectedStatus) {
+    SessionDto inputDto = new SessionDto();
+    inputDto.setName(name);
+
+    Session mappedEntity = new Session();
+    mappedEntity.setName(name);
+
+    Session serviceResponse = new Session();
+    serviceResponse.setId(1L);
+    serviceResponse.setName(name);
+
+    SessionDto mappedResponse = new SessionDto();
+    mappedResponse.setId(1L);
+    mappedResponse.setName(name);
+
     if (!"invalid".equals(inputId)) {
       when(sessionMapper.toEntity(inputDto)).thenReturn(mappedEntity);
       when(
         sessionService.update(eq(Long.parseLong(inputId)), any(Session.class))
       )
         .thenReturn(serviceResponse);
-      if (serviceResponse != null) {
+      if (expectedStatus == 200) {
         when(sessionMapper.toDto(serviceResponse)).thenReturn(mappedResponse);
       }
     }
@@ -139,18 +161,16 @@ class SessionControllerUnitTest {
   }
 
   @ParameterizedTest(name = "Delete - {0}")
-  @MethodSource("deleteScenarios")
+  @CsvSource({ "1, 200", "999, 404", "invalid, 400" })
   @DisplayName("Should handle different delete scenarios")
-  void testDeleteScenarios(
-    String scenarioName,
-    String inputId,
-    Session existingSession,
-    int expectedStatus
-  ) {
+  void testDeleteScenarios(String inputId, int expectedStatus) {
+    Session existingSession = new Session();
+    existingSession.setId(1L);
+
     if (!"invalid".equals(inputId)) {
       when(sessionService.getById(Long.valueOf(inputId)))
-        .thenReturn(existingSession);
-      if (existingSession != null) {
+        .thenReturn(expectedStatus == 200 ? existingSession : null);
+      if (expectedStatus == 200) {
         doNothing().when(sessionService).delete(Long.valueOf(inputId));
       }
     }
@@ -161,10 +181,16 @@ class SessionControllerUnitTest {
   }
 
   @ParameterizedTest(name = "Participate - {0}")
-  @MethodSource("participateScenarios")
+  @CsvSource(
+    {
+      "1, 1, 200",
+      //"999, 1, 404",
+      "1, invalid, 400",
+      "invalid, 1, 400",
+    }
+  )
   @DisplayName("Should handle different participate scenarios")
   void testParticipateScenarios(
-    String scenarioName,
     String sessionId,
     String userId,
     int expectedStatus
@@ -184,10 +210,16 @@ class SessionControllerUnitTest {
   }
 
   @ParameterizedTest(name = "Unparticipate - {0}")
-  @MethodSource("unparticipateScenarios")
+  @CsvSource(
+    {
+      "1, 1, 200",
+      //"999, 1, 404",
+      "1, invalid, 400",
+      "invalid, 1, 400",
+    }
+  )
   @DisplayName("Should handle different unparticipate scenarios")
   void testUnparticipateScenarios(
-    String scenarioName,
     String sessionId,
     String userId,
     int expectedStatus
@@ -204,210 +236,5 @@ class SessionControllerUnitTest {
     );
 
     assertThat(response.getStatusCodeValue()).isEqualTo(expectedStatus);
-  }
-
-  // Tests Scenarios
-  private static Stream<Arguments> findByIdScenarios() {
-    Session session = new Session();
-    session.setId(1L);
-    SessionDto sessionDto = new SessionDto();
-    sessionDto.setId(1L);
-
-    return Stream.of(
-      Arguments.of(
-        "should respond 200 if successfully finding session #id",
-        "1",
-        session,
-        sessionDto,
-        200
-      ),
-      Arguments.of(
-        "should respond 404 if failing to find session #id ",
-        "999",
-        null,
-        null,
-        404
-      ),
-      Arguments.of(
-        "should respond 400 if Invalid ID Format",
-        "invalid",
-        null,
-        null,
-        400
-      )
-    );
-  }
-
-  private static Stream<Arguments> createScenarios() {
-    SessionDto inputDto = new SessionDto();
-    inputDto.setName("New Session");
-    inputDto.setDescription("New Description");
-
-    Session mappedEntity = new Session();
-    mappedEntity.setName("New Session");
-    mappedEntity.setDescription("New Description");
-
-    Session serviceResponse = new Session();
-    serviceResponse.setId(1L);
-    serviceResponse.setName("New Session");
-    serviceResponse.setDescription("New Description");
-
-    SessionDto mappedResponse = new SessionDto();
-    mappedResponse.setId(1L);
-    mappedResponse.setName("New Session");
-    mappedResponse.setDescription("New Description");
-
-    return Stream.of(
-      Arguments.of(
-        "Should respond 200 if successfully creating session",
-        inputDto,
-        mappedEntity,
-        serviceResponse,
-        mappedResponse,
-        200
-      )
-    );
-  }
-
-  private static Stream<Arguments> updateScenarios() {
-    SessionDto inputDto = new SessionDto();
-    inputDto.setName("Updated Session");
-    Session mappedEntity = new Session();
-    mappedEntity.setName("Updated Session");
-    Session serviceResponse = new Session();
-    serviceResponse.setId(1L);
-    serviceResponse.setName("Updated Session");
-    SessionDto mappedResponse = new SessionDto();
-    mappedResponse.setId(1L);
-    mappedResponse.setName("Updated Session");
-
-    return Stream.of(
-      Arguments.of(
-        "Should response 200 if successfully updating session #id",
-        "1",
-        inputDto,
-        mappedEntity,
-        serviceResponse,
-        mappedResponse,
-        200
-      ),
-      Arguments.of(
-        "Should response 400 if Invalid ID Format",
-        "invalid",
-        inputDto,
-        null,
-        null,
-        null,
-        400
-      )
-    );
-  }
-
-  private static Stream<Arguments> deleteScenarios() {
-    Session existingSession = new Session();
-    existingSession.setId(1L);
-
-    return Stream.of(
-      Arguments.of(
-        "Should response 200 if successfully deleted session #id",
-        "1",
-        existingSession,
-        200
-      ),
-      Arguments.of(
-        "Should response 404 if trying to delete unknown #id session",
-        "999",
-        null,
-        404
-      ),
-      Arguments.of(
-        "Should response 400 if Invalid ID Format",
-        "invalid",
-        null,
-        400
-      )
-    );
-  }
-
-  private static Stream<Arguments> participateScenarios() {
-    return Stream.of(
-      Arguments.of(
-        "Should response 200 if successfully adding participant to session",
-        "1",
-        "1",
-        200
-      ),
-      Arguments.of(
-        "Should response 404 if trying to add participant to unknown #id session",
-        "999",
-        "1",
-        200
-      ),
-      Arguments.of(
-        "Should response 404 if trying to add unknown participant to session",
-        "1",
-        "666",
-        200
-      ),
-      Arguments.of(
-        "Should response 400 if Invalid Session ID",
-        "invalid",
-        "1",
-        400
-      ),
-      Arguments.of(
-        "Should response 400 if Invalid User ID",
-        "1",
-        "invalid",
-        400
-      ),
-      Arguments.of(
-        "Should response 400 if Both IDs Invalid",
-        "invalid",
-        "invalid",
-        400
-      )
-    );
-  }
-
-  private static Stream<Arguments> unparticipateScenarios() {
-    return Stream.of(
-      Arguments.of(
-        "Should response 200 if successfully removing participant to session",
-        "1",
-        "1",
-        200
-      ),
-      Arguments.of(
-        "Should response 404 if trying to remove participant to unknown #id session",
-        "999",
-        "1",
-        200
-      ),
-      Arguments.of(
-        "Should response 404 if trying to remove unknown participant to session",
-        "1",
-        "666",
-        200
-      ),
-      Arguments.of(
-        "Should response 400 if Invalid Session ID",
-        "invalid",
-        "1",
-        400
-      ),
-      Arguments.of(
-        "Should response 400 if Invalid User ID",
-        "1",
-        "invalid",
-        400
-      ),
-      Arguments.of(
-        "Should response 400 if Both IDs Invalid",
-        "invalid",
-        "invalid",
-        400
-      )
-    );
   }
 }

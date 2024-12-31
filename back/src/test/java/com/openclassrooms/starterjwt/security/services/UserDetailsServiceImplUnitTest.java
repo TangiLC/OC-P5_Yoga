@@ -41,7 +41,7 @@ class UserDetailsServiceImplUnitTest {
       "user@domain.com, Bob, Brown, userPass",
     }
   )
-  @DisplayName("<UT> Should return UserDetails when user is found")
+  @DisplayName("Should return UserDetails when user is found")
   void testLoadUserByUsername_UserFound(
     String email,
     String firstName,
@@ -76,7 +76,7 @@ class UserDetailsServiceImplUnitTest {
     { "nobody@example.com", "invalid@test.com", "nonexistent@domain.com" }
   )
   @DisplayName(
-    "<UT> Should throw UsernameNotFoundException when user is not found"
+    "Should throw UsernameNotFoundException when user is not found"
   )
   void testLoadUserByUsername_UserNotFound(String email) {
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
@@ -89,7 +89,7 @@ class UserDetailsServiceImplUnitTest {
   }
 
   @Test
-  @DisplayName("<UT> Should handle null values in user object")
+  @DisplayName("Should handle null values in user object")
   void testLoadUserByUsername_NullValues() {
     String email = "test@example.com";
     mockUser.setEmail(email);
