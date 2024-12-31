@@ -8,7 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class JwtResponseTest {
+class JwtResponseUnitTest {
 
   @DisplayName("Should handle JwtResponse Create scenarios")
   @ParameterizedTest(name = "{0}")

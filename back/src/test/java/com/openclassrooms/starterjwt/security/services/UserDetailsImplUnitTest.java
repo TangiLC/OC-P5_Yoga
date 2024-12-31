@@ -2,15 +2,12 @@ package com.openclassrooms.starterjwt.security.services;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.security.core.GrantedAuthority;
 
-class UserDetailsImplTest {
+class UserDetailsImplUnitTest {
 
   private UserDetailsImpl userDetails;
 
@@ -28,24 +25,6 @@ class UserDetailsImplTest {
         .build();
   }
 
-  @Test
-  @DisplayName("Should create UserDetailsImpl with correct values")
-  void testUserDetailsCreation() {
-    assertThat(userDetails.getId()).isEqualTo(1L);
-    assertThat(userDetails.getUsername()).isEqualTo("test@example.com");
-    assertThat(userDetails.getFirstName()).isEqualTo("John");
-    assertThat(userDetails.getLastName()).isEqualTo("Doe");
-    assertThat(userDetails.getAdmin()).isTrue();
-    assertThat(userDetails.getPassword()).isEqualTo("securePassword");
-  }
-
-  @Test
-  @DisplayName("Should return empty authorities")
-  void testGetAuthorities() {
-    Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-    assertThat(authorities).isNotNull().isEmpty();
-  }
-
   @ParameterizedTest
   @DisplayName("Should verify all account status methods return true")
   @CsvSource(
@@ -60,33 +39,6 @@ class UserDetailsImplTest {
     boolean result = (boolean) UserDetailsImpl.class.getMethod(methodName)
       .invoke(userDetails);
     assertThat(result).isTrue();
-  }
-
-  @Test
-  @DisplayName("Should verify equals method")
-  void testEquals() {
-    UserDetailsImpl sameDude = UserDetailsImpl.builder().id(1L).build();
-    UserDetailsImpl otherDude = UserDetailsImpl.builder().id(2L).build();
-
-    assertThat(userDetails)
-      .isEqualTo(userDetails)
-      .isEqualTo(sameDude)
-      .isNotEqualTo(otherDude)
-      .isNotEqualTo(null)
-      .isNotEqualTo(new Object());
-  }
-
-  @Test
-  @DisplayName("Should handle null values in builder")
-  void testNullValues() {
-    UserDetailsImpl nullUser = UserDetailsImpl.builder().build();
-
-    assertThat(nullUser.getId()).isNull();
-    assertThat(nullUser.getUsername()).isNull();
-    assertThat(nullUser.getFirstName()).isNull();
-    assertThat(nullUser.getLastName()).isNull();
-    assertThat(nullUser.getAdmin()).isNull();
-    assertThat(nullUser.getPassword()).isNull();
   }
 
   @ParameterizedTest

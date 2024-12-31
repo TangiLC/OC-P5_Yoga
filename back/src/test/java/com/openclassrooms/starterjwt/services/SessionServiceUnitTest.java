@@ -2,6 +2,7 @@ package com.openclassrooms.starterjwt.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.openclassrooms.starterjwt.exception.BadRequestException;
@@ -22,7 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class SessionServiceTest {
+class SessionServiceUnitTest {
 
   @Mock
   private SessionRepository sessionRepository;
@@ -33,7 +34,7 @@ class SessionServiceTest {
   @InjectMocks
   private SessionService sessionService;
 
-  public SessionServiceTest() {
+  public SessionServiceUnitTest() {
     MockitoAnnotations.openMocks(this);
   }
 
@@ -54,10 +55,18 @@ class SessionServiceTest {
 
   private static List<Arguments> participateTestCases() {
     return List.of(
-      Arguments.of(1L, 10L, true, true, false), // Nominal case: session and user exist
+      Arguments.of(1L, 10L, true, true, false), // Regular case: session and user exist
       Arguments.of(2L, 20L, false, true, true), // Session does not exist
       Arguments.of(3L, 30L, true, false, true), // User does not exist
       Arguments.of(4L, 40L, true, true, true) // User already participating
+    );
+  }
+
+  private static List<Arguments> noLongerParticipateTestCases() {
+    return List.of(
+      Arguments.of(1L, 10L, true, true, false), // Regular case:User participates
+      Arguments.of(1L, 10L, true, false, true), // User does not participate
+      Arguments.of(2L, 20L, false, false, true) // Session does not exist
     );
   }
 
@@ -131,71 +140,77 @@ class SessionServiceTest {
     assertThat(result).isNotNull().hasSize(2).containsAll(sessions);
   }
 
-  @Test
-  @DisplayName("Should return a session when it exists")
-  void getById_ShouldReturnSession_WhenExists() {
-    Session session = createSession(1L, null);
-    when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+  @ParameterizedTest
+  @MethodSource("noLongerParticipateTestCases")
+  @DisplayName("Should handle different scenarios for 'noLongerParticipate'")
+  void noLongerParticipate_ShouldHandleScenarios(
+    Long sessionId,
+    Long userId,
+    boolean sessionExists,
+    boolean userParticipates,
+    boolean expectException
+  ) {
+    Session session = sessionExists
+      ? createSession(
+        sessionId,
+        userParticipates ? List.of(createUser(userId)) : List.of()
+      )
+      : null;
 
-    Session result = sessionService.getById(1L);
+    if (sessionExists) {
+      when(sessionRepository.findById(sessionId))
+        .thenReturn(Optional.of(session));
+    } else {
+      when(sessionRepository.findById(sessionId)).thenReturn(Optional.empty());
+    }
 
-    assertThat(result).isNotNull().isEqualTo(session);
+    if (!expectException) {
+      sessionService.noLongerParticipate(sessionId, userId);
+      assertThat(session.getUsers()).doesNotContain(createUser(userId));
+      verify(sessionRepository, times(1)).save(session);
+    } else {
+      if (!sessionExists) {
+        assertThatThrownBy(() ->
+            sessionService.noLongerParticipate(sessionId, userId)
+          )
+          .isInstanceOf(NotFoundException.class);
+      } else {
+        assertThatThrownBy(() ->
+            sessionService.noLongerParticipate(sessionId, userId)
+          )
+          .isInstanceOf(BadRequestException.class);
+      }
+      verify(sessionRepository, never()).save(any(Session.class));
+    }
   }
 
-  @Test
-  @DisplayName("Should return null when session does not exist")
-  void getById_ShouldReturnNull_WhenNotExists() {
-    when(sessionRepository.findById(1L)).thenReturn(Optional.empty());
-
-    Session result = sessionService.getById(1L);
-
-    assertThat(result).isNull();
+  private static List<Arguments> getByIdTestCases() {
+    return List.of(
+      Arguments.of(1L, true), // Session exists
+      Arguments.of(2L, false) // Session does not exist
+    );
   }
 
-  @Test
-  @DisplayName(
-    "Should remove a user from a session when noLongerParticipate is valid"
-  )
-  void noLongerParticipate_ShouldRemoveUser_WhenValid() {
-    User user = createUser(10L);
-    Session session = createSession(1L, List.of(user));
+  @ParameterizedTest
+  @MethodSource("getByIdTestCases")
+  @DisplayName("Should handle different scenarios for 'getById'")
+  void getById_ShouldHandleScenarios(Long sessionId, boolean sessionExists) {
+    Session session = sessionExists ? createSession(sessionId, null) : null;
 
-    when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+    if (sessionExists) {
+      when(sessionRepository.findById(sessionId))
+        .thenReturn(Optional.of(session));
+    } else {
+      when(sessionRepository.findById(sessionId)).thenReturn(Optional.empty());
+    }
 
-    sessionService.noLongerParticipate(1L, 10L);
-
-    assertThat(session.getUsers()).doesNotContain(user);
-    verify(sessionRepository, times(1)).save(session);
-  }
-
-  @Test
-  @DisplayName(
-    "Should throw exception when user is not participating in the session"
-  )
-  void noLongerParticipate_ShouldThrowException_WhenNotParticipating() {
-    User user = new User();
-    user.setId(10L);
-    Session session = createSession(1L, List.of());
-
-    when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
-
-    assertThatThrownBy(() -> sessionService.noLongerParticipate(1L, 10L))
-      .isInstanceOf(BadRequestException.class);
-
-    verify(sessionRepository, never()).save(any(Session.class));
-  }
-
-  @Test
-  @DisplayName(
-    "Should throw exception when session does not exist for noLongerParticipate"
-  )
-  void noLongerParticipate_ShouldThrowException_WhenSessionNotFound() {
-    when(sessionRepository.findById(1L)).thenReturn(Optional.empty());
-
-    assertThatThrownBy(() -> sessionService.noLongerParticipate(1L, 10L))
-      .isInstanceOf(NotFoundException.class);
-
-    verify(sessionRepository, never()).save(any(Session.class));
+    if (sessionExists) {
+      Session result = sessionService.getById(sessionId);
+      assertThat(result).isNotNull().isEqualTo(session);
+    } else {
+      Session result = sessionService.getById(sessionId);
+      assertThat(result).isNull();
+    }
   }
 
   @DisplayName("Should create a new session successfully")

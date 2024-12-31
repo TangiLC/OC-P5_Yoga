@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class TeacherServiceTest {
+class TeacherServiceUnitTest {
 
   @Mock
   private TeacherRepository teacherRepository;
@@ -21,7 +21,7 @@ class TeacherServiceTest {
   @InjectMocks
   private TeacherService teacherService;
 
-  public TeacherServiceTest() {
+  public TeacherServiceUnitTest() {
     MockitoAnnotations.openMocks(this);
   }
 

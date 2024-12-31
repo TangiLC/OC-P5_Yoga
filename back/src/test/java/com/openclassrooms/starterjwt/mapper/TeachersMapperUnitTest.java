@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 
-class TeachersMapperTest {
+class TeachersMapperUnitTest {
 
   private final TeacherMapper teacherMapper = Mappers.getMapper(
     TeacherMapper.class

@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 
-class UsersMapperTest {
+class UsersMapperUnitTest {
 
   private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
   private static final LocalDateTime FIXED_DATE = LocalDateTime.of(

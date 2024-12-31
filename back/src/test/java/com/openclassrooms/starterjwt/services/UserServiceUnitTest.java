@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class UserServiceTest {
+class UserServiceUnitTest {
 
   @Mock
   private UserRepository userRepository;
@@ -20,7 +20,7 @@ class UserServiceTest {
   @InjectMocks
   private UserService userService;
 
-  public UserServiceTest() {
+  public UserServiceUnitTest() {
     MockitoAnnotations.openMocks(this);
   }
 

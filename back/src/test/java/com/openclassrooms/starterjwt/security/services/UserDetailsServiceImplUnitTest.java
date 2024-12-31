@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-class UserDetailsServiceImplTest {
+class UserDetailsServiceImplUnitTest {
 
   @Mock
   private UserRepository userRepository;
@@ -48,7 +48,6 @@ class UserDetailsServiceImplTest {
     String lastName,
     String password
   ) {
-    // Given
     mockUser.setId(1L);
     mockUser.setEmail(email);
     mockUser.setFirstName(firstName);
@@ -57,15 +56,12 @@ class UserDetailsServiceImplTest {
 
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
-    // When
     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-    // Then
     assertThat(userDetails).isNotNull().isInstanceOf(UserDetailsImpl.class);
 
     UserDetailsImpl userDetailsImpl = (UserDetailsImpl) userDetails;
 
-    // Test uniquement les getters générés par Lombok
     assertThat(userDetailsImpl.getUsername()).isEqualTo(email);
     assertThat(userDetailsImpl.getPassword()).isEqualTo(password);
     assertThat(userDetailsImpl.getFirstName()).isEqualTo(firstName);
@@ -83,10 +79,8 @@ class UserDetailsServiceImplTest {
     "<UT> Should throw UsernameNotFoundException when user is not found"
   )
   void testLoadUserByUsername_UserNotFound(String email) {
-    // Given
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-    // When/Then
     assertThatThrownBy(() -> userDetailsService.loadUserByUsername(email))
       .isInstanceOf(UsernameNotFoundException.class)
       .hasMessage("User Not Found with email: " + email);
@@ -97,21 +91,17 @@ class UserDetailsServiceImplTest {
   @Test
   @DisplayName("<UT> Should handle null values in user object")
   void testLoadUserByUsername_NullValues() {
-    // Given
     String email = "test@example.com";
     mockUser.setEmail(email);
 
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
-    // When
     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-    // Then
     assertThat(userDetails).isNotNull().isInstanceOf(UserDetailsImpl.class);
 
     UserDetailsImpl userDetailsImpl = (UserDetailsImpl) userDetails;
 
-    // Test uniquement les getters générés par Lombok
     assertThat(userDetailsImpl.getUsername()).isEqualTo(email);
     assertThat(userDetailsImpl.getFirstName()).isNull();
     assertThat(userDetailsImpl.getLastName()).isNull();

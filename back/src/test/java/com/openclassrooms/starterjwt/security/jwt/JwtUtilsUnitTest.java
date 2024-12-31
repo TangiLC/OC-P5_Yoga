@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 
-class JwtUtilsTest {
+class JwtUtilsUnitTest {
 
   private JwtUtils jwtUtils;
 
