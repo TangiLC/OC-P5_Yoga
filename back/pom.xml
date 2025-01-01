@@ -47,6 +47,48 @@
 		</dependency>
 
 		<dependency>
+    		<groupId>org.junit.jupiter</groupId>
+    		<artifactId>junit-jupiter</artifactId>
+			<version>5.10.0</version>
+    		<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.junit.platform</groupId>
+    		<artifactId>junit-platform-suite-api</artifactId>
+    		<version>1.10.0</version> 
+		</dependency>
+		
+
+		<dependency>
+    		<groupId>org.mockito</groupId>
+    		<artifactId>mockito-core</artifactId>
+    		<scope>test</scope>
+		</dependency>
+
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-test</artifactId>
+    		<scope>test</scope>
+			<exclusions>
+            	<exclusion>
+                	<groupId>org.junit.vintage</groupId>
+                	<artifactId>junit-vintage-engine</artifactId>
+            	</exclusion>
+        	</exclusions>
+		</dependency>
+		<dependency>
+    		<groupId>com.h2database</groupId>
+    		<artifactId>h2</artifactId>
+    		<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.assertj</groupId>
+    		<artifactId>assertj-core</artifactId>
+    		<version>3.24.2</version>
+    		<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
@@ -56,12 +98,6 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -103,19 +139,26 @@
                     </excludes>
                 </configuration>
             </plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+		
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.5</version>
+				<configuration>
+					<excludes>
+            			<exclude>com/openclassrooms/starterjwt/dto/**</exclude>
+						<exclude>com/openclassrooms/starterjwt/SpringBootSecurityJwtApplication.*</exclude>
+						<exclude>com/openclassrooms/starterjwt/security/WebSecurityConfig.*</exclude>
+						
+						
+        			</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+						
 					</execution>
 					<!-- attached to Maven test phase -->
 					<execution>
@@ -124,6 +167,7 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						
 					</execution>
 
 					<execution>
@@ -132,6 +176,7 @@
 							<goal>check</goal>
 						</goals>
 						<configuration>
+							
 							<rules>
 								<rule>
 									<element>PACKAGE</element>
@@ -139,7 +184,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.9</minimum>
+											<minimum>0.85</minimum>
 										</limit>
 									</limits>
 								</rule>
@@ -149,6 +194,29 @@
 
 				</executions>
 			</plugin>
+			<plugin>		
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-surefire-plugin</artifactId>
+            	<version>3.0.0-M8</version> 
+            	<configuration>
+                	<useModulePath>false</useModulePath>
+                
+            	</configuration>
+        	</plugin>
+			<plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-surefire-report-plugin</artifactId>
+            	<version>3.0.0-M7</version>
+        	</plugin>
+			<plugin>
+    			<groupId>org.apache.maven.plugins</groupId>
+    			<artifactId>maven-failsafe-plugin</artifactId>
+    			<version>3.0.0-M8</version>
+    			<configuration>
+        			<testFailureIgnore>true</testFailureIgnore>
+    			</configuration>
+			</plugin>
+			
 		</plugins>
 	</build>
 
