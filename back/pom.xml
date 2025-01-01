@@ -57,7 +57,6 @@
     		<artifactId>junit-platform-suite-api</artifactId>
     		<version>1.10.0</version> 
 		</dependency>
-		
 
 		<dependency>
     		<groupId>org.mockito</groupId>
@@ -87,6 +86,13 @@
     		<version>3.24.2</version>
     		<scope>test</scope>
 		</dependency>
+
+		<dependency>
+        	<groupId>io.qameta.allure</groupId>
+        	<artifactId>allure-junit5</artifactId>
+        	<version>2.21.0</version>
+        	<scope>test</scope>
+    	</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
@@ -200,7 +206,12 @@
             	<version>3.0.0-M8</version> 
             	<configuration>
                 	<useModulePath>false</useModulePath>
-                
+					<argLine>
+                   		--add-opens java.base/java.lang=ALL-UNNAMED
+                	</argLine>
+					<systemPropertyVariables>
+            			<allure.results.directory>target/allure-results</allure.results.directory>
+        			</systemPropertyVariables>
             	</configuration>
         	</plugin>
 			<plugin>
@@ -216,7 +227,23 @@
         			<testFailureIgnore>true</testFailureIgnore>
     			</configuration>
 			</plugin>
-			
+			<plugin>
+            	<groupId>io.qameta.allure</groupId>
+            	<artifactId>allure-maven</artifactId>
+            	<version>2.11.2</version>
+				<configuration>
+        			<resultsDirectory>target/allure-results</resultsDirectory>
+        			<reportDirectory>target/allure-report</reportDirectory>
+    			</configuration>
+				<executions>
+        			<execution>
+            			<phase>verify</phase>
+            			<goals>
+                			<goal>aggregate</goal>
+            			</goals>
+        			</execution>
+    			</executions>
+        	</plugin>
 		</plugins>
 	</build>
 
