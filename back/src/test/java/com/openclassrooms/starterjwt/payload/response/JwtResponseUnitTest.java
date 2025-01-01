@@ -8,15 +8,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 class JwtResponseUnitTest {
 
-  @DisplayName("Should handle JwtResponse Create scenarios")
-  @ParameterizedTest(name = "{0}")
+  //@DisplayName("Should handle JwtResponse Create scenarios")
+  @ParameterizedTest(name = "{index} => *Should handle JwtResponse Create with {0}")
   @CsvSource(
     {
       "Valid values, valid-token, 1, john.doe, John, Doe, true",
+      "Empty strings for text fields, valid-token, 1, '', '', '', false",
       //"Null fields except token and id, valid-token, 1, null, null, null, null",
-      //"Empty strings for text fields, valid-token, 1, '', '', '', false",
     }
-  )
+  ) //TO DO : handle null field
   void should_create_jwt_response_with_expected_values(
     String testName,
     String token,
@@ -52,10 +52,10 @@ class JwtResponseUnitTest {
   @CsvSource(
     {
       "Update all fields, new-token, NewType, 2, jane.doe, Jane, Doe, true",
+      "Empty strings in setters, '', '', 999, '', '', '', false",
       //"Null fields in setters, null, null, null, null, null, null, null",
-      //"Empty strings in setters, '', '', 999, '', '', '', false",
     }
-  )
+  )  // TO DO : handle null field
   void should_update_jwt_response_fields(
     String testName,
     String newToken,

@@ -74,4 +74,43 @@ class UserDetailsImplUnitTest {
     assertThat(testUser.getAdmin()).isEqualTo(admin);
     assertThat(testUser.getPassword()).isEqualTo(password);
   }
+
+  @ParameterizedTest
+  @CsvSource(
+    {
+      "'same', 1, test@example.com, John, Doe, true, securePassword, true",
+      "'different class', 0, , , , , java.lang.String, false",
+      "'same ID', 1, test2@example.com, Jane, Smith, false, anotherPassword, true",
+      "'different ID', 2, test3@example.com, Jack, Black, false, diffPassword, false",
+    }
+  )
+  @DisplayName("Should verify equals method works correctly")
+  void testEqualsParameterized(
+    String scenario,
+    Long id,
+    String username,
+    String firstName,
+    String lastName,
+    Boolean admin,
+    String password,
+    boolean expectedResult
+  ) {
+    Object other = "java.lang.String".equals(password)
+      ? "A String"
+      : id == null
+        ? null
+        : UserDetailsImpl
+          .builder()
+          .id(id)
+          .username(username)
+          .firstName(firstName)
+          .lastName(lastName)
+          .admin(admin)
+          .password(password)
+          .build();
+
+    boolean result = userDetails.equals(other);
+
+    assertThat(result).as("Scenario: %s", scenario).isEqualTo(expectedResult);
+  }
 }
