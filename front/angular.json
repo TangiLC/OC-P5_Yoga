@@ -117,7 +117,12 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "codeCoverage": true,
+            "codeCoverageExclude": [
+              "src/environments/**",
+              "src/main.ts",
+              "src/polyfills.ts" ]
           }
         },
         "cypress-run": {

@@ -46,11 +46,11 @@ VALUES
   ('Hélène', 'THIERCELIN');
 
 INSERT INTO
-  USERS (id, first_name, last_name, admin, email, password)
+  USERS (first_name, last_name, admin, email, password)
+  --password : test!1234
 VALUES
   (
-    1,
-    'Admin',
+    'Test',
     'Admin',
     true,
     'yoga@studio.com',
@@ -58,13 +58,13 @@ VALUES
   );
 
 INSERT INTO
-  USERS (id, first_name, last_name, admin, email, password)
+  USERS (first_name, last_name, admin, email, password)
+  --password : test1234! 
 VALUES
   (
-    2,
     'Test',
-    'MockUser',
+    'User',
     false,
     'test@test.com',
-    '$2a$10$.Hsa/ZjUVaHqi0tp9xieMeewrnZxrZ5pQRzddUXE/WjDu2ZThe6Iq'
+    '$2a$10$HanSGAAS30R.gSRbfXh37eV64e/FR97PMBCE/9hQtdvo/pdEb4A0y'
   );
