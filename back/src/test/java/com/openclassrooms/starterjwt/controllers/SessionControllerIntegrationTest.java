@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("¤Integration tests for SessionController")
 public class SessionControllerIntegrationTest {
 
   @Autowired
@@ -41,22 +44,22 @@ public class SessionControllerIntegrationTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
   @CsvSource(
     {
-      "1, Yoga Session, 200", // Successfully find session id#1, response="200-success"
-      "999, , 404", // fail to find un-existing session id#999, response="404-Not Found"
-      "invalid, , 400", // fail to find session with invalid id, response="400-Bad Request"
+      "Successfully find session id#1, 1, Yoga Session, 200",
+      "Fail to find un-existing session id#999, 999, , 404",
+      "Fail to find session with invalid id, invalid, , 400",
     }
   )
+  @DisplayName("Should handle findById scenario ")
   @WithMockUser
-  @DisplayName("Should handle findById scenarios and return appropriate status")
   void testFindById_Scenarios(
+    String scenarioName,
     String id,
     String expectedTitle,
     int expectedStatus
   ) throws Exception {
-    // Prepare data in H2 database
     if ("1".equals(id)) {
       Session session = new Session();
       session.setId(1L);
@@ -67,7 +70,6 @@ public class SessionControllerIntegrationTest {
       sessionRepository.save(session);
     }
 
-    // Call the REST API
     MvcResult result = mockMvc
       .perform(
         MockMvcRequestBuilders
@@ -76,11 +78,9 @@ public class SessionControllerIntegrationTest {
       )
       .andReturn();
 
-    // Verify the results
     int status = result.getResponse().getStatus();
     String content = result.getResponse().getContentAsString();
 
-    // Assertions
     assertThat(status).isEqualTo(expectedStatus);
     if (expectedStatus == 200) {
       assertThat(content).contains(expectedTitle);
@@ -89,21 +89,22 @@ public class SessionControllerIntegrationTest {
     }
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{5}]")
   @CsvSource(
     {
-      "session 1, my description,2012-01-01, 5, 200", // Regular case, Successfully create a session
-      ", my description,2012-01-01, 5, 200", // Successfully create session without name
-      "session 1, ,2012-01-01, 5, 200", // Successfully create session without description
-      "session 1, my description, , 5, 400", // fail to create session, missing date
-      "session 1, my description,2012-01-01, , 400", // fail to create session, missing teacher
+      "Regular case : Successfully create a session, session 1, my description,2012-01-01, 5, 200",
+      "Successfully create session without name, , my description,2012-01-01, 5, 200",
+      "Successfully create session without description, session 1, ,2012-01-01, 5, 200",
+      "Fail to create session : missing date, session 1, my description, , 5, 400",
+      "Fail to create session : missing teacher, session 1, my description,2012-01-01, , 400",
     }
     // TO DO : creation success logic ?
 
   )
+  @DisplayName("Should handle Create scenario ")
   @WithMockUser
-  @DisplayName("Should handle create scenarios and return appropriate status")
   void testCreate_Scenarios(
+    String scenarioName,
     String name,
     String description,
     String date,
@@ -132,21 +133,22 @@ public class SessionControllerIntegrationTest {
     assertThat(status).isEqualTo(expectedStatus);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{6}]")
   @CsvSource(
     {
-      "1, session updated, updated descr, 5, 2012-01-01, 200", // Successfully update session id#1
-      "1, , updated description, 5, 2012-01-01, 200", // Successfully update session without name
-      "1, session updated, , 5, 2012-01-01, 200", // Successfully update session without description
-      "1, session updated, updated descr, 5, , 400", // Fail to update session :missing date
-      "1, session updated, updated descr, invalid, 2012-01-01, 400", // Fail to update session :Invalid teacher id
-      //"999, session updated, updated descr, 5, 2012-01-01, 404", // Session not found
+      "Successfully update session id#1, 1, session updated, updated descr, 5, 2012-01-01, 200",
+      "Successfully update session without name, 1, , updated description, 5, 2012-01-01, 200",
+      "Successfully update session without description, 1, session updated, , 5, 2012-01-01, 200",
+      "Fail to update session :missing date, 1, session updated, updated descr, 5, , 400",
+      "Fail to update session :Invalid teacher id, 1, session updated, updated descr, invalid, 2012-01-01, 400",
+      //"Session not found, 999, session updated, updated descr, 5, 2012-01-01, 404", //->200 ?
     }
     //TO DO : 404 logic ?
   )
+  @DisplayName("Should handle Update scenario ")
   @WithMockUser
-  @DisplayName("Should handle update scenarios and return appropriate status")
   void testUpdate_Scenarios(
+    String scenarioName,
     String id,
     String name,
     String description,
@@ -154,7 +156,6 @@ public class SessionControllerIntegrationTest {
     String date,
     int expectedStatus
   ) throws Exception {
-    // Prepare existing session in the database for update
     if ("1".equals(id)) {
       Session session = new Session();
       session.setId(1L);
@@ -164,7 +165,6 @@ public class SessionControllerIntegrationTest {
       sessionRepository.save(session);
     }
 
-    // Prepare JSON payload
     String payload = String.format(
       "{\"name\": \"%s\", \"description\": \"%s\", \"date\": \"%s\", \"teacher_id\": %s}",
       name,
@@ -173,7 +173,6 @@ public class SessionControllerIntegrationTest {
       teacherId
     );
 
-    // Call the REST API
     MvcResult result = mockMvc
       .perform(
         MockMvcRequestBuilders
@@ -183,11 +182,9 @@ public class SessionControllerIntegrationTest {
       )
       .andReturn();
 
-    // Verify the results
     int status = result.getResponse().getStatus();
     String content = result.getResponse().getContentAsString();
 
-    // Assertions
     assertThat(status).isEqualTo(expectedStatus);
     if (expectedStatus == 200) {
       assertThat(content).contains(date);
@@ -216,21 +213,20 @@ public class SessionControllerIntegrationTest {
     userRepository.save(newUser);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
   @CsvSource(
     {
-      "1, 2, 200", // Successfully add user id #1 to session  n#1
-      "1, invalid, 400", // Fail to participate :Invalid user ID format
-      //"1, 1, 409", // Fail to participate :User already participating ->400?
-      "999, 1, 404", // Fail to participate : Session not found
+      "Successfully add user id #1 to session n#1, 1, 2, 200", //
+      "Fail to participate :Invalid user ID format, 1, invalid, 400", //
+      //"Fail to participate :User already participating, 1, 1, 409", //  ->400?
+      "Fail to participate : Session not found, 999, 1, 404", //
     }
-    // TO DO : rejection logic ?
+    // TO DO : rejection logic 400/409?
   )
+  @DisplayName("Should handle Participate scenarios ")
   @WithMockUser
-  @DisplayName(
-    "Should handle participate scenarios and return appropriate status"
-  )
   void testParticipate_Scenarios(
+    String scenarioName,
     String sessionId,
     String userId,
     int expectedStatus
@@ -248,21 +244,20 @@ public class SessionControllerIntegrationTest {
     assertThat(status).isEqualTo(expectedStatus);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
   @CsvSource(
     {
-      "1, 1, 200", // Successfully remove user 1 from session 1
-      //"1, 2, 404", // Fail to remove : User not participating in session->400
-      "1, invalid, 400", // Fail to remove : Invalid user ID format
-      "999, 1, 404", // Fail to remove : Session not found
+      "Successfully remove user #id from session #id, 1, 1, 200",
+      //"Fail to remove : User not participating in session, 1, 2, 404", // ->400
+      "Fail to remove : Invalid user ID format, 1, invalid, 400",
+      "Fail to remove : Session not found, 999, 1, 404",
     }
-    //TO DO : rejection logic ?
+    //TO DO : rejection logic 404/400?
   )
+  @DisplayName("Should handle noLongerParticipate scenario ")
   @WithMockUser
-  @DisplayName(
-    "Should handle noLongerParticipate scenarios and return appropriate status"
-  )
   void testNoLongerParticipate_Scenarios(
+    String scenarioName,
     String sessionId,
     String userId,
     int expectedStatus

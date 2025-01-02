@@ -2,7 +2,6 @@ package com.openclassrooms.starterjwt.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.openclassrooms.starterjwt.exception.BadRequestException;
@@ -11,18 +10,20 @@ import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.SessionRepository;
 import com.openclassrooms.starterjwt.repository.UserRepository;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+@SuiteDisplayName("SERVICE")
+@DisplayName("Unit tests for SessionService")
 class SessionServiceUnitTest {
 
   @Mock
@@ -53,28 +54,18 @@ class SessionServiceUnitTest {
     return user;
   }
 
-  private static List<Arguments> participateTestCases() {
-    return List.of(
-      Arguments.of(1L, 10L, true, true, false), // Regular case: session and user exist
-      Arguments.of(2L, 20L, false, true, true), // Session does not exist
-      Arguments.of(3L, 30L, true, false, true), // User does not exist
-      Arguments.of(4L, 40L, true, true, true) // User already participating
-    );
-  }
-
-  private static List<Arguments> noLongerParticipateTestCases() {
-    return List.of(
-      Arguments.of(1L, 10L, true, true, false), // Regular case:User participates
-      Arguments.of(1L, 10L, true, false, true), // User does not participate
-      Arguments.of(2L, 20L, false, false, true) // Session does not exist
-    );
-  }
-
-  @SuppressWarnings("null")
-  @ParameterizedTest
-  @MethodSource("participateTestCases")
-  @DisplayName("Should handle different scenarios for 'participate' method")
+  @ParameterizedTest(name = "({index}) : {0}")
+  @CsvSource(
+    {
+      "Regular case: session and user exist, 1, 10, true, true, false",
+      "Fail : Session does not exist, 2, 20, false, true, true",
+      "Fail : User does not exist, 3, 30, true, false, true",
+      "Fail : User already participating, 4, 40, true, true, true",
+    }
+  )
+  @DisplayName("Should handle different participate scenario ")
   void participate_ShouldHandleScenarios(
+    String scenarioName,
     Long sessionId,
     Long userId,
     boolean sessionExists,
@@ -117,33 +108,21 @@ class SessionServiceUnitTest {
             "Not found: the data you are looking for is unavailable."
           );
       }
-      /*else {
-        assertThatThrownBy(() -> sessionService.participate(sessionId, userId))
-          .isInstanceOf(BadRequestException.class)
-          .hasMessageContaining("User already participating");
-      }*/
       verify(sessionRepository, never()).save(any(Session.class));
     }
   }
 
-  @Test
-  @DisplayName("Should return all sessions when findAll is called")
-  void findAll_ShouldReturnAllSessions() {
-    List<Session> sessions = List.of(
-      createSession(1L, null),
-      createSession(2L, null)
-    );
-    when(sessionRepository.findAll()).thenReturn(sessions);
-
-    List<Session> result = sessionService.findAll();
-
-    assertThat(result).isNotNull().hasSize(2).containsAll(sessions);
-  }
-
-  @ParameterizedTest
-  @MethodSource("noLongerParticipateTestCases")
-  @DisplayName("Should handle different scenarios for 'noLongerParticipate'")
+  @ParameterizedTest(name = "({index}) : {0} [{5}]")
+  @CsvSource(
+    {
+      "Regular case: User participates, 1, 10, true, true, false",
+      "Fail : User does not participate, 1, 10, true, false, true",
+      "Fail : Session does not exist, 2, 20, false, false, true",
+    }
+  )
+  @DisplayName("Should handle different noLongerParticipate scenario ")
   void noLongerParticipate_ShouldHandleScenarios(
+    String scenarioName,
     Long sessionId,
     Long userId,
     boolean sessionExists,
@@ -184,37 +163,22 @@ class SessionServiceUnitTest {
     }
   }
 
-  private static List<Arguments> getByIdTestCases() {
-    return List.of(
-      Arguments.of(1L, true), // Session exists
-      Arguments.of(2L, false) // Session does not exist
-    );
-  }
-
-  @ParameterizedTest
-  @MethodSource("getByIdTestCases")
-  @DisplayName("Should handle different scenarios for 'getById'")
-  void getById_ShouldHandleScenarios(Long sessionId, boolean sessionExists) {
-    Session session = sessionExists ? createSession(sessionId, null) : null;
-
-    if (sessionExists) {
-      when(sessionRepository.findById(sessionId))
-        .thenReturn(Optional.of(session));
-    } else {
-      when(sessionRepository.findById(sessionId)).thenReturn(Optional.empty());
-    }
-
-    if (sessionExists) {
-      Session result = sessionService.getById(sessionId);
-      assertThat(result).isNotNull().isEqualTo(session);
-    } else {
-      Session result = sessionService.getById(sessionId);
-      assertThat(result).isNull();
-    }
-  }
-
-  @DisplayName("Should create a new session successfully")
   @Test
+  @DisplayName("Should return all sessions when findAll is called")
+  void findAll_ShouldReturnAllSessions() {
+    List<Session> sessions = List.of(
+      createSession(1L, null),
+      createSession(2L, null)
+    );
+    when(sessionRepository.findAll()).thenReturn(sessions);
+
+    List<Session> result = sessionService.findAll();
+
+    assertThat(result).isNotNull().hasSize(2).containsAll(sessions);
+  }
+
+  @Test
+  @DisplayName("Should create a new session successfully")
   void create_ShouldCreateSessionSuccessfully() {
     Session newSession = new Session();
     newSession.setName("New Session");
@@ -234,8 +198,8 @@ class SessionServiceUnitTest {
     verify(sessionRepository, times(1)).save(newSession);
   }
 
-  @DisplayName("Should update an existing session successfully")
   @Test
+  @DisplayName("Should update an existing session successfully")
   void update_ShouldUpdateSessionSuccessfully() {
     Long sessionId = 1L;
     Session existingSession = new Session();

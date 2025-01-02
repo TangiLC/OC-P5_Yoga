@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@SuiteDisplayName("SECURITY")
+@DisplayName("¤Integration tests for Jwt Token")
 class SecurityIntegrationTests {
 
   @Value("${oc.app.jwtSecret}")
@@ -49,7 +52,8 @@ class SecurityIntegrationTests {
       .compact();
   }
 
-  @ParameterizedTest(name = "JWT Authorization - {0}")
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
+  @DisplayName("Should handle different Token Auth scenario ")
   @CsvSource(
     {
       //"Valid token,               VALID,      200",
@@ -59,7 +63,7 @@ class SecurityIntegrationTests {
     }
   )
   void testJwtAuthorization(
-    String scenario,
+    String scenarioName,
     String tokenType,
     int expectedStatus
   ) throws Exception {
@@ -83,7 +87,8 @@ class SecurityIntegrationTests {
       .andExpect(status().is(expectedStatus));
   }
 
-  @ParameterizedTest(name = "Username extraction - {0}")
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
+  @DisplayName("Should handle different UserName extraction scenario ")
   @CsvSource(
     {
       "Valid username match,     user@test.com,     user@test.com,      true",
@@ -103,7 +108,8 @@ class SecurityIntegrationTests {
     assertThat(extracted.equals(extractUsername)).isEqualTo(shouldMatch);
   }
 
-  @ParameterizedTest(name = "Token validation - {0}")
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
+  @DisplayName("Should handle different Token validation scenario ")
   @CsvSource(
     {
       "Valid token,         VALID,      true",
@@ -113,7 +119,7 @@ class SecurityIntegrationTests {
     }
   )
   void testTokenValidation(
-    String scenario,
+    String scenarioName,
     String tokenType,
     boolean expectedValid
   ) {

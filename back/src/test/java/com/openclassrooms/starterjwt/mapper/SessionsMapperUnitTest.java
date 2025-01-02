@@ -16,11 +16,14 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+@SuiteDisplayName("MAPPER")
+@DisplayName("Unit tests for SessionsMapper")
 class SessionsMapperUnitTest {
 
   @Mock
@@ -30,8 +33,7 @@ class SessionsMapperUnitTest {
   private UserService userService;
 
   @InjectMocks
-  private SessionMapper sessionMapper= Mappers.getMapper(SessionMapper.class);
-;
+  private SessionMapper sessionMapper = Mappers.getMapper(SessionMapper.class);
 
   private static final Date TEST_DATE = new Date();
   private static final LocalDateTime TEST_DATETIME = LocalDateTime.now();

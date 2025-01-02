@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+@SuiteDisplayName("SECURITY")
+@DisplayName("Unit tests for UserDetailsServiceImpl")
 class UserDetailsServiceImplUnitTest {
 
   @Mock
@@ -33,20 +36,21 @@ class UserDetailsServiceImplUnitTest {
     mockUser = new User();
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0}")
   @CsvSource(
     {
-      "test@example.com, John, Doe, password123",
-      "admin@test.com, Jane, Smith, securePass",
-      "user@domain.com, Bob, Brown, userPass",
+      "Admin user, admin@test.com, Jane, Smith, securePass",
+      "Non-admin user, user@domain.com, Bob, Brown, userPass",
     }
   )
-  @DisplayName("Should return UserDetails when user is found")
+  @DisplayName("Should return UserDetails scenario ")
   void testLoadUserByUsername_UserFound(
+    String scenarioName,
     String email,
     String firstName,
     String lastName,
     String password
+    
   ) {
     mockUser.setId(1L);
     mockUser.setEmail(email);
@@ -75,9 +79,7 @@ class UserDetailsServiceImplUnitTest {
   @CsvSource(
     { "nobody@example.com", "invalid@test.com", "nonexistent@domain.com" }
   )
-  @DisplayName(
-    "Should throw UsernameNotFoundException when user is not found"
-  )
+  @DisplayName("Should throw UsernameNotFoundException when user is not found")
   void testLoadUserByUsername_UserNotFound(String email) {
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 

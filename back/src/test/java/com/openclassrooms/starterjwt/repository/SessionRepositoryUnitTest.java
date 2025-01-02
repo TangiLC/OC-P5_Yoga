@@ -9,9 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+@SuiteDisplayName("REPOSITORY")
+@DisplayName("Unit tests for SessionRepository")
 class SessionRepositoryUnitTest {
 
   @Mock
@@ -22,28 +25,21 @@ class SessionRepositoryUnitTest {
     MockitoAnnotations.openMocks(this);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
   @CsvSource(
-    {
-      "1, true", // Existing session ID
-      "999, false", // Non-existing session ID
-    }
+    { "Existing session id, 1, true", "Non-existing session id, 999, false" }
   )
-  @DisplayName("Should find session by ID")
-  void testFindById(Long sessionId, boolean shouldExist) {
-    // Prepare
+  @DisplayName("Should find session by id ")
+  void testFindById(String scenarioName, Long sessionId, boolean shouldExist) {
     Session session = new Session();
     session.setId(1L);
     session.setName("Yoga Class");
 
-    // Mock repository behavior
     when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
     when(sessionRepository.findById(999L)).thenReturn(Optional.empty());
 
-    // Execute
     Optional<Session> result = sessionRepository.findById(sessionId);
 
-    // Verify
     if (shouldExist) {
       assertThat(result).isPresent();
       assertThat(result.get().getId()).isEqualTo(sessionId);
@@ -53,23 +49,21 @@ class SessionRepositoryUnitTest {
     verify(sessionRepository, times(1)).findById(sessionId);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
   @CsvSource(
-    {
-      "1, true", // Existing session ID
-      "999, false", // Non-existing session ID
-    }
+    { "Existing session id, 1, true", "Non-existing session id, 999, false" }
   )
-  @DisplayName("Should check if session exists by ID")
-  void testExistsById(Long sessionId, boolean shouldExist) {
-    // Mock repository behavior
+  @DisplayName("Should check if session exists by id ")
+  void testExistsById(
+    String scenarioName,
+    Long sessionId,
+    boolean shouldExist
+  ) {
     when(sessionRepository.existsById(1L)).thenReturn(true);
     when(sessionRepository.existsById(999L)).thenReturn(false);
 
-    // Execute
     boolean exists = sessionRepository.existsById(sessionId);
 
-    // Verify
     assertThat(exists).isEqualTo(shouldExist);
     verify(sessionRepository, times(1)).existsById(sessionId);
   }

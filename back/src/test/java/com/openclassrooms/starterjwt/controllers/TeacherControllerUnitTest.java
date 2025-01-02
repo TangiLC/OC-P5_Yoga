@@ -7,6 +7,9 @@ import com.openclassrooms.starterjwt.dto.TeacherDto;
 import com.openclassrooms.starterjwt.mapper.TeacherMapper;
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.services.TeacherService;
+
+import org.junit.platform.suite.api.SuiteDisplayName;
+
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +20,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("Unit tests for TeacherController")
 class TeacherControllerUnitTest {
 
   @Mock
@@ -33,15 +38,15 @@ class TeacherControllerUnitTest {
     MockitoAnnotations.openMocks(this);
   }
 
-  @ParameterizedTest(name = "{0}")
+  @ParameterizedTest(name = "({index}) : {0} [{4}]")
   @CsvSource(
     {
-      "Valid ID, 1, true, 200",
-      "Non-existing ID, 999, false, 404",
-      "Invalid ID format, invalid, false, 400",
+      "Regular case : successfully finding valid #id, 1, true, 200",
+      "Fail to find : non-existing id, 999, false, 404",
+      "Fail to find : Invalid id format, invalid, false, 400",
     }
   )
-  @DisplayName("Should handle different findById scenarios")
+  @DisplayName("Should handle different FindById scenario")
   void testFindByIdScenarios(
     String scenarioName,
     String inputId,
@@ -72,9 +77,9 @@ class TeacherControllerUnitTest {
     }
   }
 
-  @ParameterizedTest(name = "{0}")
-  @CsvSource({ "With Teachers, true, 200", "No Teachers, false, 200" })
-  @DisplayName("Should handle findAll scenarios")
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
+  @CsvSource({ "List with Teachers, true, 200", "Empty list, false, 200" })
+  @DisplayName("Should handle different FindAll scenario ")
   void testFindAllScenarios(
     String scenarioName,
     boolean hasTeachers,

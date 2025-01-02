@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.services.UserService;
+
+import org.junit.platform.suite.api.SuiteDisplayName;
+
 import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("¤Integration tests for UserController")
 public class UserControllerIntegrationTest {
 
   @Autowired
@@ -40,17 +45,18 @@ public class UserControllerIntegrationTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
   @CsvSource(
     {
-      "1, 200, yoga@studio.com", // successfully find user #1:"200-success"
-      "999, 404, ", // fail to find user #999: "404-Not Found"
-      "invalid, 400, ", // fail to find user #invalid: "400-Bad Request"
+      "Regular case : successfully find user,1, 200, yoga@studio.com",
+      "Fail to find : user id unknown, 999, 404, ",
+      "Fail to find : user id invalid, invalid, 400, ",
     }
   )
   @WithMockUser
-  @DisplayName("Should handle FindById scenarios, return status")
+  @DisplayName("Should handle different FindById scenario ")
   void testFindById_scenarios(
+    String scenarioName,
     String id,
     int expectedStatus,
     String expectedEmail
@@ -84,17 +90,18 @@ public class UserControllerIntegrationTest {
     }
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{4}]")
   @CsvSource(
     {
-      "1, yoga@studio.com, yoga@studio.com, 200", //successfully delete user #1
-      "1, yoga@studio.com, other@studio.com, 401", // not allowed to delete (unauth user)
-      "999, yoga@studio.com, yoga@studio.com, 404", // fail to delete user (not found)
-      "invalid, yoga@studio.com, yoga@studio.com, 400", // fail to delete user (bad request)
+      "Regular case : successfully delete user, 1, yoga@studio.com, yoga@studio.com, 200",
+      "Fail to delete : unauth user, 1, yoga@studio.com, other@studio.com, 401",
+      "Fail to delete : user id not found, 999, yoga@studio.com, yoga@studio.com, 404",
+      "Fail to delete : user id invalid, invalid, yoga@studio.com, yoga@studio.com, 400",
     }
   )
   @WithMockUser
   void testDelete(
+    String scenarioName,
     String id,
     String userEmail,
     String loggedInUserEmail,

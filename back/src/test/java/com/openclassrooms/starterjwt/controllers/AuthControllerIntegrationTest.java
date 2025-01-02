@@ -10,6 +10,7 @@ import com.openclassrooms.starterjwt.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("¤Integration tests for AuthController")
 public class AuthControllerIntegrationTest {
 
   @Autowired
@@ -41,25 +44,25 @@ public class AuthControllerIntegrationTest {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{4}]")
   @CsvSource(
     {
-      "yoga@studio.com, password, true, 200", // Regular case : successfully login for Valid admin
-      "user@studio.com, password, false, 200", // Regular case : successfully login for Valid user
-      "yoga@studio.com, wrongpassword, true, 401", // Fail to login : Wrong password
-      "unknown@studio.com, password, false, 401", // Fail to login : Unknown user
-      "yoga@studio.com, '', false, 400", // Bad Request : empty password
-      //"invalid-email, password, false, 400", // Bad Request : Invalid email format ->401
+      "Regular case : successfully login for Valid admin, yoga@studio.com, password, true, 200",
+      "Regular case : successfully login for Valid user, user@studio.com, password, false, 200",
+      "Fail to login : Wrong password,yoga@studio.com, wrongpassword, true, 401",
+      "Fail to login : Unknown user,unknown@studio.com, password, false, 401",
+      "Bad Request : empty password,yoga@studio.com, '', false, 400",
+      //"Bad Request : Invalid email format,invalid-email, password, false, 400", //  ->401
     }
   ) // TO DO : handle email format ?
-  @DisplayName("Should handle different login scenarios")
+  @DisplayName("Should handle Login scenario ")
   void testAuthenticate_Scenarios(
+    String scenarioName,
     String email,
     String password,
     boolean isAdmin,
     int expectedStatus
   ) throws Exception {
-    // Prepare test data
     if (email.equals("yoga@studio.com") || email.equals("user@studio.com")) {
       User user = new User();
       user
@@ -71,12 +74,10 @@ public class AuthControllerIntegrationTest {
       userRepository.save(user);
     }
 
-    // Create login request
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmail(email);
     loginRequest.setPassword(password);
 
-    // Perform login request
     MvcResult result = mockMvc
       .perform(
         MockMvcRequestBuilders
@@ -86,7 +87,6 @@ public class AuthControllerIntegrationTest {
       )
       .andReturn();
 
-    // Verify response
     int status = result.getResponse().getStatus();
     String content = result.getResponse().getContentAsString();
 
@@ -98,19 +98,20 @@ public class AuthControllerIntegrationTest {
     }
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{5}]")
   @CsvSource(
     {
-      "new@studio.com, John, Doe, password, 200, User registered successfully!", // Regular case : successfully register
-      "existing@studio.com, John, Doe, password, 400, Error: Email is already taken!", // fail to register :Email already exists
-      "invalid-email, John, Doe, password, 400, ", // fail to register : Invalid email format
-      "new@studio.com, , Doe, password, 400, ", // fail to register : Missing firstName
-      "new@studio.com, John, , password, 400, ", // fail to register : Missing lastName
-      "new@studio.com, John, Doe, , 400, ", // fail to register : Missing lastName
+      "Regular case : successfully register, new@studio.com, John, Doe, password, 200, User registered successfully!",
+      "Fail to register :Email already exists, existing@studio.com, John, Doe, password, 400, Error: Email is already taken!",
+      "Fail to register : Invalid email format, invalid-email, John, Doe, password, 400, ",
+      "Fail to register : Missing firstName, new@studio.com, , Doe, password, 400, ",
+      "Fail to register : Missing lastName, new@studio.com, John, , password, 400, ",
+      "Fail to register : Missing lastName, new@studio.com, John, Doe, , 400, ",
     }
   )
-  @DisplayName("Should handle different registration scenarios")
+  @DisplayName("Should handle Registration scenario ")
   void testRegister_Scenarios(
+    String scenarioName,
     String email,
     String firstName,
     String lastName,
@@ -118,7 +119,6 @@ public class AuthControllerIntegrationTest {
     int expectedStatus,
     String expectedMessage
   ) throws Exception {
-    // Prepare test data for existing user scenario
     if (email.equals("existing@studio.com")) {
       User existingUser = new User();
       existingUser
@@ -130,14 +130,12 @@ public class AuthControllerIntegrationTest {
       userRepository.save(existingUser);
     }
 
-    // Create registration request
     SignupRequest signupRequest = new SignupRequest();
     signupRequest.setEmail(email);
     signupRequest.setFirstName(firstName);
     signupRequest.setLastName(lastName);
     signupRequest.setPassword(password);
 
-    // Perform registration request
     MvcResult result = mockMvc
       .perform(
         MockMvcRequestBuilders
@@ -147,7 +145,6 @@ public class AuthControllerIntegrationTest {
       )
       .andReturn();
 
-    // Verify response
     int status = result.getResponse().getStatus();
     String content = result.getResponse().getContentAsString();
 
@@ -156,7 +153,6 @@ public class AuthControllerIntegrationTest {
       assertThat(content).contains(expectedMessage);
     }
 
-    // Verify database state
     if (expectedStatus == 200) {
       User savedUser = userRepository.findByEmail(email).orElse(null);
       assertThat(savedUser).isNotNull();

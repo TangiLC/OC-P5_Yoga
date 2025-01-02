@@ -9,9 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+@SuiteDisplayName("REPOSITORY")
+@DisplayName("Unit test for UserRepository")
 class UserRepositoryUnitTest {
 
   @Mock
@@ -22,16 +25,15 @@ class UserRepositoryUnitTest {
     MockitoAnnotations.openMocks(this);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
   @CsvSource(
     {
-      "yoga@studio.com, true", // Existing email
-      "unknown@studio.com, false", // Non-existing email
+      "Existing email, yoga@studio.com, true",
+      "Unknown email, unknown@studio.com, false",
     }
   )
-  @DisplayName("Should find user by email")
-  void testFindByEmail(String email, boolean shouldExist) {
-    // Prepare
+  @DisplayName("Should find user by email ")
+  void testFindByEmail(String scenarioName, String email, boolean shouldExist) {
     User user = new User();
     user
       .setEmail("yoga@studio.com")
@@ -40,16 +42,13 @@ class UserRepositoryUnitTest {
       .setPassword("encodedPassword")
       .setAdmin(true);
 
-    // Mock repository behavior
     when(userRepository.findByEmail("yoga@studio.com"))
       .thenReturn(Optional.of(user));
     when(userRepository.findByEmail("unknown@studio.com"))
       .thenReturn(Optional.empty());
 
-    // Execute
     Optional<User> result = userRepository.findByEmail(email);
 
-    // Verify
     if (shouldExist) {
       assertThat(result).isPresent();
       assertThat(result.get().getEmail()).isEqualTo(email);
@@ -59,23 +58,20 @@ class UserRepositoryUnitTest {
     verify(userRepository, times(1)).findByEmail(email);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
   @CsvSource(
     {
-      "yoga@studio.com, true", // Existing email
-      "unknown@studio.com, false", // Non-existing email
+      "Existing email, yoga@studio.com, true",
+      "Unknown email, unknown@studio.com, false",
     }
   )
-  @DisplayName("Should check if email exists")
+  @DisplayName("Should check if email exists ")
   void testExistsByEmail(String email, boolean shouldExist) {
-    // Mock repository behavior
     when(userRepository.existsByEmail("yoga@studio.com")).thenReturn(true);
     when(userRepository.existsByEmail("unknown@studio.com")).thenReturn(false);
 
-    // Execute
     boolean exists = userRepository.existsByEmail(email);
 
-    // Verify
     assertThat(exists).isEqualTo(shouldExist);
     verify(userRepository, times(1)).existsByEmail(email);
   }
