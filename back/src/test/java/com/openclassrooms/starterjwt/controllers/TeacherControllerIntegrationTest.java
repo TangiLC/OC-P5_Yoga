@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.repository.TeacherRepository;
+
+import org.junit.platform.suite.api.SuiteDisplayName;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -24,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("¤Integration tests for TeacherController")
 public class TeacherControllerIntegrationTest {
 
   @Autowired
@@ -32,20 +37,15 @@ public class TeacherControllerIntegrationTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @ParameterizedTest
-  @CsvSource(
-    {
-      "3, true", // 3 teachers exist, status=200, response contains all 3 teachers
-      "0, false", // No teachers exist, status=200, empty response
-    }
-  )
+  @ParameterizedTest(name = "({index}) : {0} [200]")
+  @CsvSource({ "List is not empty, 3, true", "List is empty, 0, false" })
   @WithMockUser
-  @DisplayName("Should return all teachers or empty list")
+  @DisplayName("Should return List of all teachers ")
   void testFindAll_Teachers(
+    String scenarioName,
     int numberOfTeachers,
     boolean shouldContainTeachers
   ) throws Exception {
-    // Préparer les données dans H2
     if (numberOfTeachers > 0) {
       Teacher teacher1 = new Teacher();
       teacher1.setFirstName("Margot").setLastName("Delahaye").setId(1L);
@@ -58,7 +58,6 @@ public class TeacherControllerIntegrationTest {
       teacherRepository.save(teacher3);
     }
 
-    // Appeler l'API REST
     MvcResult result = mockMvc
       .perform(
         MockMvcRequestBuilders
@@ -67,11 +66,9 @@ public class TeacherControllerIntegrationTest {
       )
       .andReturn();
 
-    // Vérifier les résultats
     int status = result.getResponse().getStatus();
     String content = result.getResponse().getContentAsString();
 
-    // Assertions
     assertThat(status).isEqualTo(200);
     if (shouldContainTeachers) {
       assertThat(content)
@@ -81,24 +78,24 @@ public class TeacherControllerIntegrationTest {
     }
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{4}]")
   @CsvSource(
     {
-      "1, Margot, Delahaye, 200", // Find teacher #1, response="200-success"
-      "2, Helene, Thiercelin, 200", // Find teacher #2, response="200-success"
-      "999, , , 404", // fail to find not-existing Teacher #999, response="404-not found"
-      "invalid, , , 400", // Invalid ID format, response="400-Bad Request"
+      "Regular case : successfully Find teacher #1, 1, Margot, Delahaye, 200",
+      "Regular case : successfully Find teacher #2, 2, Helene, Thiercelin, 200",
+      "Fail to find unknown id teacher, 999, , , 404",
+      "Fail to find invalid id teacher, invalid, , , 400",
     }
   )
   @WithMockUser
-  @DisplayName("Should handle findById scenarios and return appropriate status")
+  @DisplayName("Should handle FindById scenario ")
   void testFindById_Scenarios(
+    String scenarioName,
     String id,
     String expectedFirstName,
     String expectedLastName,
     int expectedStatus
   ) throws Exception {
-    // Préparer les données dans H2
 
     Teacher teacher1 = new Teacher();
     teacher1.setId(1L).setFirstName("Margot").setLastName("Delahaye");
@@ -107,7 +104,6 @@ public class TeacherControllerIntegrationTest {
     teacher2.setId(2L).setFirstName("Helene").setLastName("Thiercelin");
     teacherRepository.save(teacher2);
 
-    // Appeler l'API REST
     MvcResult result = mockMvc
       .perform(
         MockMvcRequestBuilders
@@ -116,11 +112,9 @@ public class TeacherControllerIntegrationTest {
       )
       .andReturn();
 
-    // Vérifier les résultats
     int status = result.getResponse().getStatus();
     String content = result.getResponse().getContentAsString();
 
-    // Assertions
     assertThat(status).isEqualTo(expectedStatus);
     if (expectedStatus == 200) {
       assertThat(content).contains(expectedFirstName, expectedLastName);

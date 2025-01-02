@@ -9,9 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+@SuiteDisplayName("REPOSITORY")
+@DisplayName("Unit tests for TeacherRepository")
 class TeacherRepositoryUnitTest {
 
   @Mock
@@ -22,34 +25,31 @@ class TeacherRepositoryUnitTest {
     MockitoAnnotations.openMocks(this);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "({index}) : {0} [{4}]")
   @CsvSource(
     {
-      "1, John, Doe, true", // Existing teacher
-      "999, Jane, Smith, false", // Non-existing teacher
+      "Existing teacher id, 1, John, Doe, true",
+      "Non-existing teacher id, 999, Jane, Smith, false",
     }
   )
-  @DisplayName("Should find teacher by ID")
+  @DisplayName("Should find teacher by id ")
   void testFindById(
+    String scenarioName,
     Long id,
     String firstName,
     String lastName,
     boolean shouldExist
   ) {
-    // Prepare
     Teacher teacher = new Teacher();
     teacher.setId(1L);
     teacher.setFirstName("John");
     teacher.setLastName("Doe");
 
-    // Mock repository behavior
     when(teacherRepository.findById(1L)).thenReturn(Optional.of(teacher));
-    when(teacherRepository.findById(2L)).thenReturn(Optional.empty());
+    when(teacherRepository.findById(999L)).thenReturn(Optional.empty());
 
-    // Execute
     Optional<Teacher> result = teacherRepository.findById(id);
 
-    // Verify
     if (shouldExist) {
       assertThat(result).isPresent();
       assertThat(result.get().getId()).isEqualTo(id);
@@ -61,23 +61,15 @@ class TeacherRepositoryUnitTest {
     verify(teacherRepository, times(1)).findById(id);
   }
 
-  @ParameterizedTest
-  @CsvSource(
-    {
-      "1, true", // ID exists
-      "999, false", // ID doesn't exist
-    }
-  )
-  @DisplayName("Should check if teacher exists by ID")
-  void testExistsById(Long id, boolean shouldExist) {
-    // Mock repository behavior
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
+  @CsvSource({ "Existing id, 1, true", "Unknown id, 999, false" })
+  @DisplayName("Should check if teacher exists by id ")
+  void testExistsById(String scenarioName, Long id, boolean shouldExist) {
     when(teacherRepository.existsById(1L)).thenReturn(true);
     when(teacherRepository.existsById(999L)).thenReturn(false);
 
-    // Execute
     boolean exists = teacherRepository.existsById(id);
 
-    // Verify
     assertThat(exists).isEqualTo(shouldExist);
     verify(teacherRepository, times(1)).existsById(id);
   }

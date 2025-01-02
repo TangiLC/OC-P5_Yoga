@@ -6,13 +6,15 @@ import com.openclassrooms.starterjwt.dto.TeacherDto;
 import com.openclassrooms.starterjwt.models.Teacher;
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.mapstruct.factory.Mappers;
 
+@SuiteDisplayName("MAPPER")
+@DisplayName("Unit tests for TeachersMapper")
 class TeachersMapperUnitTest {
 
   private final TeacherMapper teacherMapper = Mappers.getMapper(

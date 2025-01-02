@@ -2,23 +2,26 @@ package com.openclassrooms.starterjwt.payload.response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@SuiteDisplayName("PAYLOAD")
+@DisplayName("Unit tests for JwtResponse")
 class JwtResponseUnitTest {
 
-  //@DisplayName("Should handle JwtResponse Create scenarios")
-  @ParameterizedTest(name = "{index} => *Should handle JwtResponse Create with {0}")
+  @DisplayName("Should handle different JwtResponse Create scenario ")
+  @ParameterizedTest(name = "({index}) : {0}")
   @CsvSource(
     {
       "Valid values, valid-token, 1, john.doe, John, Doe, true",
       "Empty strings for text fields, valid-token, 1, '', '', '', false",
-      //"Null fields except token and id, valid-token, 1, null, null, null, null",
+      "Null fields for text fields, valid-token, 1, , , , ",
     }
-  ) //TO DO : handle null field
+  )
   void should_create_jwt_response_with_expected_values(
-    String testName,
+    String scenarioName,
     String token,
     Long id,
     String username,
@@ -47,17 +50,17 @@ class JwtResponseUnitTest {
       });
   }
 
-  @DisplayName("Should handle JwtResponse Update scenarios")
-  @ParameterizedTest(name = "{0}")
+  @DisplayName("Should handle different JwtResponse Update scenarios")
+  @ParameterizedTest(name = "({index}) : {0}")
   @CsvSource(
     {
       "Update all fields, new-token, NewType, 2, jane.doe, Jane, Doe, true",
       "Empty strings in setters, '', '', 999, '', '', '', false",
-      //"Null fields in setters, null, null, null, null, null, null, null",
+      "Null fields in setters, , , , , , , ",
     }
-  )  // TO DO : handle null field
+  )
   void should_update_jwt_response_fields(
-    String testName,
+    String scenarioName,
     String newToken,
     String newType,
     Long newId,

@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+@SuiteDisplayName("EXCEPTION")
+@DisplayName("Unit tests for NotFoundException")
 class NotFoundExceptionUnitTest {
 
   private static final String DEFAULT_MESSAGE =
@@ -46,7 +49,6 @@ class NotFoundExceptionUnitTest {
       .isInstanceOf(RuntimeException.class)
       .hasMessage(customMessage);
 
-    // And check HTTP status
     ResponseStatus responseStatus =
       NotFoundException.class.getAnnotation(ResponseStatus.class);
     assertThat(responseStatus)

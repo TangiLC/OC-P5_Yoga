@@ -7,6 +7,9 @@ import com.openclassrooms.starterjwt.dto.UserDto;
 import com.openclassrooms.starterjwt.mapper.UserMapper;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.services.UserService;
+
+import org.junit.platform.suite.api.SuiteDisplayName;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,6 +23,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("Unit tests for UserController")
 class UserControllerUnitTest {
 
   @Mock
@@ -43,15 +48,15 @@ class UserControllerUnitTest {
     SecurityContextHolder.setContext(securityContext);
   }
 
-  @ParameterizedTest(name = "{0}")
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
   @CsvSource(
     {
-      "Valid ID, 1, true, 200",
-      "Non-existing ID, 999, false, 404",
-      "Invalid ID format, invalid, false, 400",
+      "Regular case : successfully find user with valid id, 1, true, 200",
+      "Fail to find : non-existing user id, 999, false, 404",
+      "Fail to find : invalid user id format, invalid, false, 400",
     }
   )
-  @DisplayName("Should handle different findById scenarios")
+  @DisplayName("Should handle different FindById scenario ")
   void testFindByIdScenarios(
     String scenarioName,
     String inputId,
@@ -82,16 +87,16 @@ class UserControllerUnitTest {
     }
   }
 
-  @ParameterizedTest(name = "{0}")
+  @ParameterizedTest(name = "({index}) : {0} [{4}]")
   @CsvSource(
     {
-      "Valid ID and authorized user, 1, true, test@example.com, 200",
-      "Non-existing user ID, 999, false, , 404",
-      "Invalid ID format, invalid, false, , 400",
-      //"Unauthorized user, 1, true, unauthorized@example.com, 401",
+      "Regular case : successfully delete user, 1, true, test@example.com, 200",
+      "Fail to delete : non-existing user id, 999, false, , 404",
+      "Fail to delete : invalid user id format, invalid, false, , 400",
+      //"Fail to delete : Unauthorized user, 1, true, unauthorized@example.com, 401",
     }
-  )
-  @DisplayName("Should handle different delete scenarios")
+  ) // TO DO : handle unauthorize 400/401 ?
+  @DisplayName("Should handle different Delete scenario ")
   void testDeleteScenarios(
     String scenarioName,
     String inputId,

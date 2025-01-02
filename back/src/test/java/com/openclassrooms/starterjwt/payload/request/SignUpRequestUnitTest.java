@@ -11,6 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import org.junit.platform.suite.api.SuiteDisplayName;
+
+@SuiteDisplayName("PAYLOAD")
+@DisplayName("Unit tests for SignupRequest")
 class SignupRequestUnitTest {
 
   private static final Validator validator;
@@ -20,19 +24,19 @@ class SignupRequestUnitTest {
     validator = factory.getValidator();
   }
 
-  @DisplayName("Should handle validate SignupRequest scenarios")
-  @ParameterizedTest(name = "{0}")
+  @DisplayName("Should handle different SignupRequest scenario ")
+  @ParameterizedTest(name = "({index}) : {0}")
   @CsvSource(
     {
       "Valid request, test@test.com, John, Doe, password123, false, 0, ''",
       "Invalid email format, invalid-email, John, Doe, password123, true, 1, 'email: doit être une adresse électronique syntaxiquement correcte'",
-      "Email exceeding max length, aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbb.com, John, Doe, password123, true, 1, 'email: la taille doit être comprise entre 0 et 50'",
-      "FirstName too short, test@test.com, Jo, Doe, password123, true, 1, 'firstName: la taille doit être comprise entre 3 et 20'",
-      "FirstName too long, test@test.com, JJJJJJJJJJJJJJJJJJJJJ, Doe, password123, true, 1, 'firstName: la taille doit être comprise entre 3 et 20'",
-      "LastName too short, test@test.com, John, Do, password123, true, 1, 'lastName: la taille doit être comprise entre 3 et 20'",
-      "LastName too long, test@test.com, John, DDDDDDDDDDDDDDDDDDDDD, password123, true, 1, 'lastName: la taille doit être comprise entre 3 et 20'",
-      "Password too short, test@test.com, John, Doe, pass, true, 1, 'password: la taille doit être comprise entre 6 et 40'",
-      "Password too long, test@test.com, John, Doe, ppppppppppppppppppppppppppppppppppppppppppp, true, 1, 'password: la taille doit être comprise entre 6 et 40'",
+      "Email too long (>50), aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbb.com, John, Doe, password123, true, 1, 'email: la taille doit être comprise entre 0 et 50'",
+      "FirstName too short (<3), test@test.com, Jo, Doe, password123, true, 1, 'firstName: la taille doit être comprise entre 3 et 20'",
+      "FirstName too long (>20), test@test.com, JJJJJJJJJJJJJJJJJJJJJ, Doe, password123, true, 1, 'firstName: la taille doit être comprise entre 3 et 20'",
+      "LastName too short (<3), test@test.com, John, Do, password123, true, 1, 'lastName: la taille doit être comprise entre 3 et 20'",
+      "LastName too long (>20), test@test.com, John, DDDDDDDDDDDDDDDDDDDDD, password123, true, 1, 'lastName: la taille doit être comprise entre 3 et 20'",
+      "Password too short (<6), test@test.com, John, Doe, pass, true, 1, 'password: la taille doit être comprise entre 6 et 40'",
+      "Password too long (>40), test@test.com, John, Doe, ppppppppppppppppppppppppppppppppppppppppppp, true, 1, 'password: la taille doit être comprise entre 6 et 40'",
       "All null values, , , , , true, 4, 'ne doit pas être vide'",
       "All empty values, '', '', '', '', true, 7, 'ne doit pas être vide'",
       "All blank values, '      ', '      ', '      ', '      ', true, 5, 'ne doit pas être vide'",
@@ -40,7 +44,7 @@ class SignupRequestUnitTest {
     }
   )
   void should_validate_signup_request(
-    String testName,
+    String scenarioName,
     String email,
     String firstName,
     String lastName,

@@ -13,6 +13,9 @@ import com.openclassrooms.starterjwt.payload.response.MessageResponse;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
+
+import org.junit.platform.suite.api.SuiteDisplayName;
+
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +32,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("Unit tests for AuthController")
 class AuthControllerUnitTest {
 
   @Mock
@@ -51,14 +56,14 @@ class AuthControllerUnitTest {
     MockitoAnnotations.openMocks(this);
   }
 
-  @ParameterizedTest(name = "{0}")
+  @ParameterizedTest(name = "({index}) : {0} [{4}]")
   @CsvSource(
     {
       "Valid login, test@example.com, password, mockedJwtToken, 200, false",
       "Unknown user, unknown@example.com, wrongpassword, , 404, false",
     }
   )
-  @DisplayName("Should handle different login scenarios")
+  @DisplayName("Should handle Login scenario ")
   void testAuthenticateUser(
     String scenarioName,
     String email,
@@ -138,14 +143,14 @@ class AuthControllerUnitTest {
     }
   }
 
-  @ParameterizedTest(name = "{0}")
+  @ParameterizedTest(name = "({index}) : {0} [{7}]")
   @CsvSource(
     {
-      "New user registration, new@example.com, First, Last, password, false, encodedPassword, 200, 'User registered successfully!'",
-      "Existing email, existing@example.com, First, Last, password, true, , 400, 'Error: Email is already taken!'",
+      "Success : new user registration, new@example.com, First, Last, password, false, encodedPassword, 200, 'User registered successfully!'",
+      "Fail : email already exists, existing@example.com, First, Last, password, true, , 400, 'Error: Email is already taken!'",
     }
   )
-  @DisplayName("Should handle different registration scenarios")
+  @DisplayName("Should handle Registration scenario ")
   void testRegisterUser(
     String scenarioName,
     String email,

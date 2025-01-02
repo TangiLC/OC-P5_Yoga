@@ -2,11 +2,14 @@ package com.openclassrooms.starterjwt.security.services;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+@SuiteDisplayName("SECURITY")
+@DisplayName("Unit tests for UserDetailsImpl")
 class UserDetailsImplUnitTest {
 
   private UserDetailsImpl userDetails;
@@ -25,31 +28,36 @@ class UserDetailsImplUnitTest {
         .build();
   }
 
-  @ParameterizedTest
-  @DisplayName("Should verify all account status methods return true")
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
+  @DisplayName("Should verify all account status methods")
   @CsvSource(
     {
-      "isAccountNonExpired",
-      "isAccountNonLocked",
-      "isCredentialsNonExpired",
-      "isEnabled",
+      "Not expired, isAccountNonExpired, true",
+      "Not Locked, isAccountNonLocked, true",
+      "Credentials not expired, isCredentialsNonExpired, true",
+      "Enabled, isEnabled, true",
     }
   )
-  void testAccountStatusMethods(String methodName) throws Exception {
+  void testAccountStatusMethods(
+    String scenarioName,
+    String methodName,
+    String expectedResult
+  ) throws Exception {
     boolean result = (boolean) UserDetailsImpl.class.getMethod(methodName)
       .invoke(userDetails);
     assertThat(result).isTrue();
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name="({index}) : {0}")
   @CsvSource(
     {
-      "2, user@test.com, Jane, Smith, false, pwd123",
-      "3, admin@test.com, Bob, Brown, true, pwd456",
+      "Create user account, 2, user@test.com, Jane, Smith, false, pwd123",
+      "Create admin account, 3, admin@test.com, Bob, Brown, true, pwd456",
     }
   )
-  @DisplayName("Should create various user details correctly")
+  @DisplayName("Should create various user details correctly ")
   void testMultipleUserDetails(
+    String scenarioName,
     Long id,
     String username,
     String firstName,
@@ -75,18 +83,18 @@ class UserDetailsImplUnitTest {
     assertThat(testUser.getPassword()).isEqualTo(password);
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name="({index}) : {0} [{7}]")
   @CsvSource(
     {
-      "'same', 1, test@example.com, John, Doe, true, securePassword, true",
+      "'exactly same', 1, test@example.com, John, Doe, true, securePassword, true",
       "'different class', 0, , , , , java.lang.String, false",
       "'same ID', 1, test2@example.com, Jane, Smith, false, anotherPassword, true",
       "'different ID', 2, test3@example.com, Jack, Black, false, diffPassword, false",
     }
   )
-  @DisplayName("Should verify equals method works correctly")
+  @DisplayName("Should verify equals method works correctly ")
   void testEqualsParameterized(
-    String scenario,
+    String scenarioName,
     Long id,
     String username,
     String firstName,
@@ -111,6 +119,6 @@ class UserDetailsImplUnitTest {
 
     boolean result = userDetails.equals(other);
 
-    assertThat(result).as("Scenario: %s", scenario).isEqualTo(expectedResult);
+    assertThat(result).as("Scenario: %s", scenarioName).isEqualTo(expectedResult);
   }
 }

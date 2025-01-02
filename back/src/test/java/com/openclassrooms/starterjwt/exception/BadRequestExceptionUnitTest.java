@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+@SuiteDisplayName("EXCEPTION")
+@DisplayName("Unit tests for BadRequestException")
 class BadRequestExceptionUnitTest {
 
   private static final String DEFAULT_MESSAGE =
@@ -24,7 +27,6 @@ class BadRequestExceptionUnitTest {
       .isInstanceOf(RuntimeException.class)
       .hasMessage(DEFAULT_MESSAGE);
 
-    // And check HTTP status
     ResponseStatus responseStatus =
       BadRequestException.class.getAnnotation(ResponseStatus.class);
     assertThat(responseStatus)

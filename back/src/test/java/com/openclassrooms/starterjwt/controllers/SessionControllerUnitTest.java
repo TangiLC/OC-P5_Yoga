@@ -9,6 +9,9 @@ import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.services.SessionService;
+
+import org.junit.platform.suite.api.SuiteDisplayName;
+
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
+@SuiteDisplayName("CONTROLLER")
+@DisplayName("Unit tests for SessionController")
 class SessionControllerUnitTest {
 
   @Mock
@@ -56,10 +61,17 @@ class SessionControllerUnitTest {
     assertThat(response.getBody()).isEqualTo(sessionDtos);
   }
 
-  @ParameterizedTest(name = "Find by ID - {0}")
-  @CsvSource({ "1, 200, valid", "999, 404, valid", "invalid, 400, invalid" })
-  @DisplayName("Should handle different findById scenarios")
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
+  @CsvSource(
+    {
+      "Regular case : Successfully find session, 1, 200, valid",
+      "Fail to find session : id unknown, 999, 404, valid",
+      "Fail to find session : id invalid, invalid, 400, invalid",
+    }
+  )
+  @DisplayName("Should handle FindById scenario ")
   void testFindByIdScenarios(
+    String scenarioName,
     String inputId,
     int expectedStatus,
     String description
@@ -85,10 +97,15 @@ class SessionControllerUnitTest {
     }
   }
 
-  @ParameterizedTest(name = "Create - {0}")
-  @CsvSource({ "'New Session', 'New Description', 200" })
-  @DisplayName("Should handle different create scenarios")
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
+  @CsvSource(
+    {
+      "Regular case : successfully create a session, New Session, New Description, 200",
+    }
+  )
+  @DisplayName("Should handle different Create scenario ")
   void testCreateScenarios(
+    String scenarioName,
     String name,
     String description,
     int expectedStatus
@@ -123,10 +140,20 @@ class SessionControllerUnitTest {
     }
   }
 
-  @ParameterizedTest(name = "Update - {0}")
-  @CsvSource({ "1, 'Updated Session', 200", "invalid, 'Updated Session', 400" })
-  @DisplayName("Should handle different update scenarios")
-  void testUpdateScenarios(String inputId, String name, int expectedStatus) {
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
+  @CsvSource(
+    {
+      "Regular case : successfully update session, 1, 'Updated Session', 200",
+      "Fail to update : invalid session id, invalid, 'Updated Session', 400",
+    }
+  )
+  @DisplayName("Should handle different Update scenario ")
+  void testUpdateScenarios(
+    String scenarioName,
+    String inputId,
+    String name,
+    int expectedStatus
+  ) {
     SessionDto inputDto = new SessionDto();
     inputDto.setName(name);
 
@@ -160,10 +187,20 @@ class SessionControllerUnitTest {
     }
   }
 
-  @ParameterizedTest(name = "Delete - {0}")
-  @CsvSource({ "1, 200", "999, 404", "invalid, 400" })
-  @DisplayName("Should handle different delete scenarios")
-  void testDeleteScenarios(String inputId, int expectedStatus) {
+  @ParameterizedTest(name = "({index}) : {0} [{2}]")
+  @CsvSource(
+    {
+      "Regular case : successfully delete session, 1, 200",
+      "Fail to delete : session id unknown, 999, 404",
+      "Fail to delete : session id invalid, invalid, 400",
+    }
+  )
+  @DisplayName("Should handle different Delete scenario ")
+  void testDeleteScenarios(
+    String scenarioName,
+    String inputId,
+    int expectedStatus
+  ) {
     Session existingSession = new Session();
     existingSession.setId(1L);
 
@@ -180,17 +217,18 @@ class SessionControllerUnitTest {
     assertThat(response.getStatusCodeValue()).isEqualTo(expectedStatus);
   }
 
-  @ParameterizedTest(name = "Participate - {0}")
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
   @CsvSource(
     {
-      "1, 1, 200",
-      //"999, 1, 404",
-      "1, invalid, 400",
-      "invalid, 1, 400",
+      "Regular case : user successfully participate to session, 1, 1, 200",
+      //"Fail to participate : user unknown, 999, 1, 404", //->400
+      "Fail to participate : invalid user id, 1, invalid, 400",
+      "Fail to participate : invalid session id, invalid, 1, 400",
     }
-  )
-  @DisplayName("Should handle different participate scenarios")
+  ) // TO DO : handle unknown user 404/400 ?
+  @DisplayName("Should handle different Participate scenario ")
   void testParticipateScenarios(
+    String scenarioName,
     String sessionId,
     String userId,
     int expectedStatus
@@ -209,17 +247,18 @@ class SessionControllerUnitTest {
     assertThat(response.getStatusCodeValue()).isEqualTo(expectedStatus);
   }
 
-  @ParameterizedTest(name = "Unparticipate - {0}")
+  @ParameterizedTest(name = "({index}) : {0} [{3}]")
   @CsvSource(
     {
-      "1, 1, 200",
-      //"999, 1, 404",
-      "1, invalid, 400",
-      "invalid, 1, 400",
+      "Regular case : user successfully unparticipate to session, 1, 1, 200",
+      //"Fail to unparticipate : session id unknown, 999, 1, 404", //-> 400
+      "Fail to unparticipate : user id invalid,1, invalid, 400",
+      "Fail to unparticipate : session id invalid,invalid, 1, 400",
     }
   )
-  @DisplayName("Should handle different unparticipate scenarios")
+  @DisplayName("Should handle different Unparticipate scenario ")
   void testUnparticipateScenarios(
+    String scenarioName,
     String sessionId,
     String userId,
     int expectedStatus
