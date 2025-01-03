@@ -1,10 +1,10 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomName } from "../utils/e2eUtils";
 
 describe('Delete spec', () => {
   it('should create, login, and delete the account successfully', () => {
-    const firstName = `${randomName(5)}`;
-    const lastName = `${randomName(8)}`;
-    const email = `${firstName}${lastName}@test.com`;
+    const firstName = `${randomName(5,5)}`;
+    const lastName = `${randomName(7,7)}`;
+    const email = `${firstName}.${lastName}@test.com`;
     const password = 'Test987!';
 
     cy.visit('/register');
@@ -42,10 +42,3 @@ describe('Delete spec', () => {
   });
 });
 
-
-function randomName(length :number) {
-  return [...uuidv4().replace(/-/g, '')]
-    .filter((char) => /[a-zA-Z]/.test(char))
-    .slice(0, length)
-    .join('');
-}

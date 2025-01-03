@@ -50,24 +50,20 @@ describe('Login spec', () => {
     cy.url().should('eq', Cypress.config().baseUrl + '/login');
   });
 
+
   it('Login fail : unknown user ', () => {
     cy.visit('/login');
-
-    cy.intercept('POST', '/api/auth/login', {
-      statusCode: 401,
-      body: { message: 'unknown user' },
-    }).as('loginFail');
 
     cy.get('input[formControlName=email]').type('unknown@example.com');
     cy.get('input[formControlName=password]').type('password123*');
 
     cy.get('button[type="submit"]').click();
 
-    cy.wait('@loginFail', { timeout: 5000 });
-
     cy.contains('p', 'An error occurred').should('be.visible');
 
     cy.url().should('eq', Cypress.config().baseUrl + '/login');
   });
+
+
 
 });
