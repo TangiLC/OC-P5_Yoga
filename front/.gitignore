@@ -43,6 +43,6 @@ Thumbs.db
 
 **/.DS_Store
 
-# Tests
-/.nyc_output/*
-/cypress/screenshots/*
+# Tests coverage
+.nyc_output/*
+cypress/screenshots/*
