@@ -58,6 +58,7 @@
     "jest-marbles": "3.0.3",
     "jest-stare": "^2.5.2",
     "nyc": "15.1.0",
+    "source-map-support": "^0.5.21",
     "typescript": "4.7.4",
     "webpack": "5.74.0"
   }

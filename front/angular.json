@@ -142,6 +142,7 @@
           "builder": "@cypress/schematic:cypress",
           "options": {
             "devServerTarget": "yoga:serve-coverage",
+            "proxyConfig": "src/proxy.conf.json",
             "watch": true,
             "headless": false
           },

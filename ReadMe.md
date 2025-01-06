@@ -84,7 +84,7 @@ suivre les étapes suivantes :
    ```bash
    ng serve
    ```
-   L'application sera disponible à `http://localhost:4200`.
+   L'application sera disponible à `https://localhost:4200`.
 
 ## Exécution des Tests
 

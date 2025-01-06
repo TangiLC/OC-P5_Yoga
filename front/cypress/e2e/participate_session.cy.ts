@@ -4,7 +4,7 @@ import {
   deleteTestSession,
   extractNumberFromText,
   randomName,
-} from './e2eUtils';
+} from './utils/e2eUtils';
 
 describe('Gestion de la participation aux sessions', () => {
   const sessionName = `Test Session ${randomName(3, 3)}`;

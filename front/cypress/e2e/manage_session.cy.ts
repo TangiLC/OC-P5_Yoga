@@ -1,4 +1,4 @@
-import { capitalize, connectAdmin, randomName } from './e2eUtils';
+import { capitalize, connectAdmin, randomName } from './utils/e2eUtils';
 
 describe('Manage Session', () => {
   it('Création, Modification, suppression de session par administrateur', () => {
