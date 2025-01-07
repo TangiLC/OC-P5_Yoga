@@ -1,62 +1,10 @@
 export function userAccount_e2eTest() {
   describe('User account', () => {
     beforeEach(() => {
-      cy.intercept('POST', '/api/auth/login', (req) => {
-        const { email } = req.body;
-        if (email === 'yoga@studio.com') {
-          req.reply({
-            statusCode: 200,
-            body: {
-              token: 'mock-jwt-token-admin',
-              type: 'Bearer',
-              id: 1,
-              username: 'yoga@studio.com',
-              firstName: 'Test',
-              lastName: 'ADMIN',
-              admin: true,
-            },
-          });
-        } else if (email === 'test@test.com') {
-          req.reply({
-            statusCode: 200,
-            body: {
-              token: 'mock-jwt-token-user',
-              type: 'Bearer',
-              id: 2,
-              username: 'test@test.com',
-              firstName: 'Test',
-              lastName: 'USER',
-              admin: false,
-            },
-          });
-        }
-      }).as('login');
-
-      cy.intercept('GET', '/api/user/1', {
-        statusCode: 200,
-        body: {
-          id: 1,
-          email: 'yoga@studio.com',
-          firstName: 'Test',
-          lastName: 'ADMIN',
-          admin: true,
-          createdAt: '2025-01-01T12:12:00',
-          updatedAt: '2025-01-01T13:13:00',
-        },
-      }).as('getAdminProfile');
-
-      cy.intercept('GET', '/api/user/2', {
-        statusCode: 200,
-        body: {
-          id: 2,
-          email: 'test@test.com',
-          firstName: 'Test',
-          lastName: 'USER',
-          admin: false,
-          createdAt: '2025-01-02T12:12:00',
-          updatedAt: '2025-01-02T13:13:00',
-        },
-      }).as('getUserProfile');
+      interceptLogin();
+      interceptAdminProfile();
+      interceptUserProfile();
+      interceptGetSessionsEmpty();
     });
 
     it('Displays admin profile', () => {
@@ -107,4 +55,74 @@ export function userAccount_e2eTest() {
       cy.url().should('include', '/sessions');
     });
   });
+
+  const interceptLogin = () => {
+    cy.intercept('POST', '/api/auth/login', (req) => {
+      const { email } = req.body;
+      if (email === 'yoga@studio.com') {
+        req.reply({
+          statusCode: 200,
+          body: {
+            token: 'mock-jwt-token-admin',
+            type: 'Bearer',
+            id: 1,
+            username: 'yoga@studio.com',
+            firstName: 'Test',
+            lastName: 'ADMIN',
+            admin: true,
+          },
+        });
+      } else if (email === 'test@test.com') {
+        req.reply({
+          statusCode: 200,
+          body: {
+            token: 'mock-jwt-token-user',
+            type: 'Bearer',
+            id: 2,
+            username: 'test@test.com',
+            firstName: 'Test',
+            lastName: 'USER',
+            admin: false,
+          },
+        });
+      }
+    }).as('login');
+  };
+
+  const interceptAdminProfile = () => {
+    cy.intercept('GET', '/api/user/1', {
+      statusCode: 200,
+      body: {
+        id: 1,
+        email: 'yoga@studio.com',
+        firstName: 'Test',
+        lastName: 'ADMIN',
+        admin: true,
+        createdAt: '2025-01-01T12:12:00',
+        updatedAt: '2025-01-01T13:13:00',
+      },
+    }).as('getAdminProfile');
+  };
+
+  const interceptUserProfile = () => {
+    cy.intercept('GET', '/api/user/2', {
+      statusCode: 200,
+      body: {
+        id: 2,
+        email: 'test@test.com',
+        firstName: 'Test',
+        lastName: 'USER',
+        admin: false,
+        createdAt: '2025-01-02T12:12:00',
+        updatedAt: '2025-01-02T13:13:00',
+      },
+    }).as('getUserProfile');
+  };
+
+  const interceptGetSessionsEmpty = () => {
+    cy.intercept('GET', '/api/session', {
+      statusCode: 200,
+      body: [],
+    }).as('GetSessions');
+  };
 }

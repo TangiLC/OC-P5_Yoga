@@ -4,7 +4,7 @@ export function loginUser_e2eTest() {
       cy.visit('/login');
 
       interceptLoginUserSuccess();
-      interceptFetchSessionsEmpty();
+      interceptGetSessionsEmpty();
 
       cy.get('input[formControlName=email]').type('yoga@studio.com');
       cy.get('input[formControlName=password]').type('test!1234');
@@ -75,10 +75,10 @@ export function loginUser_e2eTest() {
     }).as('unknownUser');
   };
 
-  const interceptFetchSessionsEmpty = () => {
+  const interceptGetSessionsEmpty = () => {
     cy.intercept('GET', '/api/session', {
       statusCode: 200,
       body: [],
-    }).as('fetchSessions');
+    }).as('GetSessions');
   };
 }

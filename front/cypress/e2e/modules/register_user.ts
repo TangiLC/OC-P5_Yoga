@@ -81,6 +81,23 @@ export function registerUser_e2eTest() {
         cy.contains('span', 'An error occurred').should('be.visible');
       });
 
+      it('should fail for too long last name', () => {
+        cy.visit('/register');
+
+        interceptRegisterBadRequest();
+
+        cy.get('input[formControlName=lastName]').type(
+          'ThisNameIsLongerThanTwenty'
+        );
+        cy.get('input[formControlName=firstName]').type('Jack');
+        cy.get('input[formControlName=email]').type('jsmith@test.com');
+        cy.get('input[formControlName=password]').type('Test-987');
+        cy.get('button[type="submit"]').click();
+
+        cy.wait('@badRequest');
+        cy.contains('span', 'An error occurred').should('be.visible');
+      });
+
       it('should fail for too long email', () => {
         cy.visit('/register');
 

@@ -13,13 +13,17 @@ export function participateSession_e2eTest() {
     let callDetail2Count = 0;
 
     beforeEach(() => {
-      setupIntercepts(mockToken);
-
+      interceptLoginUser();
+      interceptGetTeachers(mockToken);
+      interceptGetSessions(mockToken);
+      interceptParticipateSession();
+      interceptUnparticipateSession();
+      interceptSessionDetails(mockToken);
       connectUser();
     });
 
     it('should Participate to session', () => {
-      let initialAttendeeNumber: number = 0;
+      let initialAttendeeNumber = 0;
 
       navigateToSessionDetails(sessionName1);
 
@@ -31,7 +35,7 @@ export function participateSession_e2eTest() {
         });
 
       cy.get('button').contains('Participate').click();
-      cy.wait('@participateSession');
+      cy.wait('@getSessionDetails1');
       cy.get('button').contains('Do not participate').should('exist');
       cy.get('[data-testid="attendees"]')
         .invoke('text')
@@ -44,7 +48,7 @@ export function participateSession_e2eTest() {
     });
 
     it('should Unparticipate from session', () => {
-      let initialAttendeeNumber: number = 0;
+      let initialAttendeeNumber = 0;
 
       navigateToSessionDetails(sessionName2);
       cy.get('[data-testid="attendees"]')
@@ -64,7 +68,16 @@ export function participateSession_e2eTest() {
         });
     });
 
-    function setupIntercepts(token: string) {
+    function setupIntercepts(token) {
+      interceptLoginUser();
+      interceptGetTeachers(token);
+      interceptGetSessions(token);
+      interceptParticipateSession();
+      interceptUnparticipateSession();
+      interceptSessionDetails(token);
+    }
+
+    const interceptLoginUser = () => {
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
         body: {
@@ -76,7 +89,9 @@ export function participateSession_e2eTest() {
           lastName: 'Test',
         },
       }).as('login');
+    };
 
+    const interceptGetTeachers = (token) => {
       cy.intercept('GET', '/api/teacher/1', (req) => {
         req.headers['Authorization'] = `Bearer ${token}`;
         req.reply({
@@ -84,7 +99,9 @@ export function participateSession_e2eTest() {
           body: { id: 1, lastName: 'DELAHAYE', firstName: 'Margot' },
         });
       }).as('teacher1');
+    };
 
+    const interceptGetSessions = (token) => {
       cy.intercept('GET', '/api/session', (req) => {
         req.headers['Authorization'] = `Bearer ${token}`;
         req.reply({
@@ -109,15 +126,21 @@ export function participateSession_e2eTest() {
           ],
         });
       }).as('getSessions');
+    };
 
+    const interceptParticipateSession = () => {
       cy.intercept('POST', '/api/session/1/participate/2', {
         statusCode: 200,
       }).as('participateSession');
+    };
 
+    const interceptUnparticipateSession = () => {
       cy.intercept('DELETE', '/api/session/2/participate/2', {
         statusCode: 200,
       }).as('unparticipateSession');
+    };
 
+    const interceptSessionDetails = (token) => {
       cy.intercept('GET', '/api/session/1', (req) => {
         req.headers['Authorization'] = `Bearer ${token}`;
         callDetail1Count += 1;
@@ -149,9 +172,9 @@ export function participateSession_e2eTest() {
           },
         });
       }).as('getSessionDetails2');
-    }
+    };
 
-    function navigateToSessionDetails(name: string) {
+    const navigateToSessionDetails = (name) => {
       cy.url().should('include', '/sessions');
       cy.get('.items mat-card')
         .filter(`:contains("${name}")`)
@@ -160,12 +183,12 @@ export function participateSession_e2eTest() {
         });
 
       cy.url().should('include', '/sessions/detail');
-    }
+    };
 
-    function navigateToSessionsList() {
+    const navigateToSessionsList = () => {
       cy.get('span.link[routerlink="sessions"]').contains('Sessions').click();
       cy.wait('@getSessions');
       cy.url().should('include', '/sessions');
-    }
+    };
   });
 }

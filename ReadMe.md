@@ -97,25 +97,32 @@ suivre les étapes suivantes :
    ```
    L'application sera disponible à `https://localhost:4200`.
 
-## Exécution des Tests
+## ☑️ Exécution des Tests
 
 ### Backend
-1. **Tests unitaires et d'intégration Junit5** :
+
+Dans le répertoire `/back`
+1. ![JUnit5](https://img.shields.io/badge/JUnit5-grey?logo=junit5&logoColor=green)**Tests unitaires et d'intégration Junit5** :
    ```bash
    mvn clean test
    ```
 2. **Rapports de couverture avec JaCoCo** :
    Les rapports seront disponibles dans `target/site/jacoco/index.html`.
+   ![rapport Junit5]('./ressources/reports/junit5Coverage.png)
 
 ### Frontend
-1. **Tests unitaires et d'intégration avec Jest** :
+
+Dans le répertoire `/front`
+1. ![Jest](https://img.shields.io/badge/Jest-grey?logo=jest&logoColor=C21325)
+**Tests unitaires et d'intégration avec Jest** :
    ```bash
    npm run test
    ```
     Les rapports de tests sont accessibles dans `coverage/jest/jest-stare/index.html`.
-    Les rapports de coverage sont à consulter `coverage/jest/index.html`
+    Les rapports de coverage sont à consulter `coverage/jest/lcov-report/index.html`
+    ![rapport Jest]('./ressources/reports/jestCoverage.png')
 
-2. **Tests End-to-End avec Cypress** :
+2. ![Cypress](https://img.shields.io/badge/Cypress-grey?logo=cypress&logoColor=69D3A7)**Tests End-to-End avec Cypress** :
    ```bash
    npm run e2e
    ```
@@ -123,7 +130,8 @@ suivre les étapes suivantes :
    ```bash
    npm run e2e:coverage
    ```
-
+    Les rapports de coverage sont à consulter `coverage/lcov-report/index.html` 
+    ![rapport e2e]('./ressources/reports/e2eCoverage.png')
 
 ## Contribution
 Les contributions sont les bienvenues ! Forkez le dépôt et soumettez une pull request.
