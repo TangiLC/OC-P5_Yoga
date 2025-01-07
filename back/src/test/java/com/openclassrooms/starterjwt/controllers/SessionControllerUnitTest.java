@@ -101,6 +101,9 @@ class SessionControllerUnitTest {
   @CsvSource(
     {
       "Regular case : successfully create a session, New Session, New Description, 200",
+      //"Fail to create : invalid session name, , New Description, 400",
+      //"Fail to create : invalid session Description, New Session, , 400",
+      //"Fail to create : null data, , , 400"
     }
   )
   @DisplayName("Should handle different Create scenario ")

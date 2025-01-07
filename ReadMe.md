@@ -1,17 +1,28 @@
-# Yoga App
+# 🧘‍♀️ Yoga App
 
-![Java](https://img.shields.io/badge/Java-11%2B-blue)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.5.4-green)
-![Node.js](https://img.shields.io/badge/Node.js-14%2B-brightgreen)
-![Angular](https://img.shields.io/badge/Angular-12%2B-red)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+![Java](https://img.shields.io/badge/Java-11%2B-orange?logo=coffeescript&logoColor=orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.5.4-green?logo=spring&logoColor=green)
+![Node.js](https://img.shields.io/badge/Node.js-14%2B-brightgreen?logo=node.js&logoColor=brightgreen)
+![Angular](https://img.shields.io/badge/Angular-12%2B-DD0031?logo=angular&logoColor=DD0031)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=3178C6)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=4479A1)
 
-## Description
+![Coursera](https://img.shields.io/badge/Projet-Open%20Classrooms-673AB8?logo=coursera&logoColor=673AB8)
+![Jest](https://img.shields.io/badge/Tested%20with%20-Jest-C21325?logo=jest&logoColor=C21325)
+![JUnit5](https://img.shields.io/badge/Tested%20with-JUnit.5-green?logo=junit5&logoColor=green)
+![Cypress](https://img.shields.io/badge/Tested%20with-Cypress-69D3A7?logo=cypress&logoColor=69D3A7)
+
+
+
+
+## 📝 Description
 Yoga App est une application full-stack permettant de gérer les utilisateurs et les enseignants d'une école de yoga. Le projet comprend :
 - Un backend Spring-Boot pour l'authentification, la gestion des utilisateurs, enseignants et sessions via une API REST sécurisée.
 - Un frontend Angular pour une interface utilisateur intuitive.
 
-## Prérequis
+Ce projet est développé dans un cadre prédagogique pour le cursus **Full-Stack Java Angular d'OpenClassrooms**. Le but est de mettre en place des tests front (Jest), back (Junit5) et e2e (Cypress).
+
+## 🚀 Prérequis
 
 ### Backend
 - Java 11 ou supérieur
@@ -23,7 +34,7 @@ Yoga App est une application full-stack permettant de gérer les utilisateurs et
 - npm ou yarn
 - Angular CLI (version 12 ou supérieure)
 
-## Installation et Configuration
+## 🛠️ Installation et Configuration
 
 Après avoir cloné ce dépôt,
  ```bash
@@ -31,7 +42,7 @@ Après avoir cloné ce dépôt,
    ```
 suivre les étapes suivantes :
 
-### Installation de la Base de Données
+### 💽 Installation de la Base de Données
 1. **Installer MySQL**.
 2. **Créer la base de données** :
    ```sql
@@ -55,7 +66,7 @@ suivre les étapes suivantes :
      - Connectez-vous à votre base de données.
      - Importer le fichier `script.sql` dans la base `yoga_app`.
 
-### Installation Backend
+### ⚙️ Installation Backend
 
 1. **Allez dans le répertoire Backend** :
    ```bash
@@ -71,7 +82,7 @@ suivre les étapes suivantes :
    ```
    Le serveur par défaut sera sur le `port 8080`.
 
-### Installation Frontend
+### 💻 Installation Frontend
 1. **Allez dans le répertoire Frontend** :
    ```bash
    cd frontend
