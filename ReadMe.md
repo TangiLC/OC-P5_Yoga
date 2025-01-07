@@ -27,7 +27,7 @@ Ce projet est développé dans un cadre prédagogique pour le cursus **Full-Stac
 ### Backend
 - Java 11 ou supérieur
 - Maven 3.6 ou supérieur
-- Une instance de base de données MySQL/PostgreSQL en cours d'exécution (ou H2 pour les tests)
+- Une instance de base de données MySQL en cours d'exécution (ou H2 pour les tests)
 
 ### Frontend
 - Node.js (version 14 ou supérieure)
@@ -68,7 +68,7 @@ suivre les étapes suivantes :
 
 ### ⚙️ Installation Backend
 
-1. **Allez dans le répertoire Backend** :
+1. **Aller dans le répertoire Backend** :
    ```bash
    cd backend
    ```
@@ -83,7 +83,7 @@ suivre les étapes suivantes :
    Le serveur par défaut sera sur le `port 8080`.
 
 ### 💻 Installation Frontend
-1. **Allez dans le répertoire Frontend** :
+1. **Aller dans le répertoire Frontend** :
    ```bash
    cd frontend
    ```
@@ -108,7 +108,8 @@ Dans le répertoire `/back`
    ```
 2. **Rapports de couverture avec JaCoCo** :
    Les rapports seront disponibles dans `target/site/jacoco/index.html`.
-   ![rapport Junit5]('./ressources/reports/junit5Coverage.png)
+
+   ![rapport Junit5](ressources/reports/junit5Coverage.png)
 
 ### Frontend
 
@@ -120,21 +121,24 @@ Dans le répertoire `/front`
    ```
     Les rapports de tests sont accessibles dans `coverage/jest/jest-stare/index.html`.
     Les rapports de coverage sont à consulter `coverage/jest/lcov-report/index.html`
-    ![rapport Jest]('./ressources/reports/jestCoverage.png')
+
+    ![rapport Jest](ressources/reports/jestCoverage.png)
 
 2. ![Cypress](https://img.shields.io/badge/Cypress-grey?logo=cypress&logoColor=69D3A7)**Tests End-to-End avec Cypress** :
    ```bash
    npm run e2e
    ```
-   Les rapports sont générés avec
+   Le fichier `global.cy.ts` contient l'ensemble des modules de test ; Les rapports sont ensuite générés avec :
    ```bash
    npm run e2e:coverage
    ```
     Les rapports de coverage sont à consulter `coverage/lcov-report/index.html` 
-    ![rapport e2e]('./ressources/reports/e2eCoverage.png')
 
-## Contribution
-Les contributions sont les bienvenues ! Forkez le dépôt et soumettez une pull request.
+    ![rapport e2e](ressources/reports/e2eCoverage.png)
+
+
 
 ## Comptes de Démonstration
+
+Un compte admin est inclus dans le script mySQL :
 - **Admin** : yoga@studio.com / test!1234
