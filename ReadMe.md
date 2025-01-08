@@ -103,13 +103,19 @@ suivre les étapes suivantes :
 
 Dans le répertoire `/back`
 1. ![JUnit5](https://img.shields.io/badge/JUnit5-grey?logo=junit5&logoColor=green)**Tests unitaires et d'intégration Junit5** :
-   ```bash
+```bash
    mvn clean test
    ```
 2. **Rapports de couverture avec JaCoCo** :
    Les rapports seront disponibles dans `target/site/jacoco/index.html`.
 
    ![rapport Junit5](ressources/reports/junit5Coverage.png)
+
+3. **Rapports des tests avec surefire** :
+```bash
+    mvn surefire-report:report-only
+   ```
+   Cette commande permet de générer un rapport html des classes de test, disponible à `target/site/surefire-report.html`
 
 ### Frontend
 
