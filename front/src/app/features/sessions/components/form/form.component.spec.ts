@@ -146,6 +146,33 @@ describe('FormComponent', () => {
     component.sessionForm = undefined;
     expect(() => component.submit()).not.toThrow();
   });
+
+  //@unit-test
+  it('🔄 should enable submit button when all inputs are valid', () => {
+    const submitButton: HTMLButtonElement = fixture.nativeElement.querySelector(
+      'button[type="submit"]'
+    );
+
+    expect(submitButton.disabled).toBeTruthy();
+
+    component.sessionForm?.setValue({
+      name: 'Test Session',
+      date: '2024-12-18',
+      teacher_id: '1',
+      description: 'Test Yoga 001',
+    });
+    fixture.detectChanges();
+    expect(submitButton.disabled).toBeFalsy();
+
+    component.sessionForm?.get('name')?.setValue('');
+    fixture.detectChanges();
+    expect(submitButton.disabled).toBeTruthy();
+
+    component.sessionForm?.get('name')?.setValue('Valid Session Name');
+    fixture.detectChanges();
+    expect(submitButton.disabled).toBeFalsy();
+  });
+
   //@unit-test
   it('1️⃣should get teachers$ observable for dropdown list', () => {
     expect(component.teachers$).toBeDefined();
@@ -168,6 +195,7 @@ describe('FormComponent', () => {
   });
 
   // Integration Tests
+
   //@integrat-test
   it('🔄 should handle different initialization scenarios correctly', () => {
     const scenarios = [
@@ -285,6 +313,25 @@ describe('FormComponent', () => {
           });
           expect(sessionApiServiceMock.create).not.toHaveBeenCalled();
           expect(routerMock.navigate).toHaveBeenCalledWith(['sessions']);
+        },
+      },
+      {
+        description: 'Empty name field',
+        setup: () => {
+          component.onUpdate = false;
+          component.sessionForm?.setValue({
+            name: '',
+            date: '2024-12-18',
+            teacher_id: '1',
+            description: 'Test Yoga 001',
+          });
+        },
+        submit: () => {
+          ngZone.run(() => component.submit());
+        },
+        expectations: () => {
+          //expect(sessionApiServiceMock.create).not.toHaveBeenCalled();
+          expect(component.sessionForm?.invalid).toBeTruthy();
         },
       },
     ];

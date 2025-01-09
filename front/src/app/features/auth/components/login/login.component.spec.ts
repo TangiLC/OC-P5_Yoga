@@ -132,7 +132,6 @@ describe('LoginComponent', () => {
     );
     expect(emailInput.classList).toContain('ng-invalid');
   });
-
   // Integration Tests
   //@integrat-test
   it('🔄should submit the form and navigate to sessions on success', () => {
