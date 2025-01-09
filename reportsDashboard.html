@@ -13,15 +13,30 @@
             display: flex;
             flex-wrap: wrap;
         }
-        h2 { text-align: center;}
+
+        h2 {
+            text-align: center;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+            height: 60dvh;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
 
         .frame-container {
             border: 1px solid #ccc;
             margin: 10px;
             flex: 1 1 calc(50% - 20px);
-            min-width: 400px;
-            height: 400px;
+            max-width: calc(50% - 20px);
+            max-height: 98%;
             position: relative;
+            overflow: hidden;
+            display: block;
         }
 
         iframe {
@@ -43,39 +58,44 @@
 </head>
 
 <body>
+    <div class="flex-container">
 
-    <div class="frame-container">
-        <h2>JEST STARE : rapport de tests Jest</h2>
-        <iframe src="./front/coverage/jest/jest-stare/index.html"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
-        <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+
+        <div class="frame-container">
+            <h2>ISTANBUL COVERAGE : rapport de coverage Front-end</h2>
+            <iframe src="./front/coverage/jest/lcov-report/index.html"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
+            <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+        </div>
+        <div class="frame-container">
+            <h2>JEST STARE : rapport de tests Jest</h2>
+            <iframe src="./front/coverage/jest/jest-stare/index.html"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
+            <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+        </div>
     </div>
 
-    <div class="frame-container">
-        <h2>ISTANBUL COVERAGE : rapport de coverage Front-end</h2>
-        <iframe src="./front/coverage/jest/lcov-report/index.html"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
-        <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+    <div class="flex-container">
+        <div class="frame-container">
+            <h2>JACOCO COVERAGE : rapport de coverage Back-end</h2>
+            <iframe src="./back/target/site/jacoco/index.html"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
+            <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+        </div>
+        <div class="frame-container">
+            <h2>SUREFIRE REPORT : rapport de tests Junit5</h2>
+            <iframe src="./back/target/site/surefire-report.html"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
+            <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+        </div>
     </div>
-
-
-
-    <div class="frame-container"><h2>SUREFIRE REPORT : rapport de tests Junit5</h2>
-        <iframe src="./back/target/site/surefire-report.html"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
-        <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
-    </div>
-
-    <div class="frame-container"><h2>JACOCO COVERAGE : rapport de coverage Back-end</h2>
-        <iframe src="./back/target/site/jacoco/index.html"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
-        <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
-    </div>
-
-    <div class="frame-container"><h2>ISTANBUL COVERAGE : rapport de coverage e2e Cypress</h2>
-        <iframe src="./front/coverage/lcov-report/index.html"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
-        <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+    <div class="flex-container">
+        <div class="frame-container">
+            <h2>ISTANBUL COVERAGE : rapport de coverage e2e Cypress</h2>
+            <iframe src="./front/coverage/lcov-report/index.html"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></iframe>
+            <div class="fallback" style="display: none;">Exécutez le test pour afficher le rapport</div>
+        </div>
     </div>
 
 </body>
