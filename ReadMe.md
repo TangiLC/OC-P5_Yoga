@@ -142,7 +142,9 @@ Dans le répertoire `/front`
 
     ![rapport e2e](ressources/reports/e2eCoverage.png)
 
+### Dashboard de rapports
 
+   Le fichier `reportDashboard.html` présente l'ensemble des rapports une fois les tests effectués.
 
 ## Comptes de Démonstration
 

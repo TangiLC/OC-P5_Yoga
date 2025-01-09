@@ -1,6 +1,6 @@
 module.exports = {
   moduleNameMapper: {
-    '@core/(.*)': '<rootDir>/src/app/core/$1',
+    '@core/(.*)': '<rootDir>/src/app/core/$1'
   },
   preset: 'jest-preset-angular',
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
@@ -9,11 +9,14 @@ module.exports = {
   collectCoverage: true,
   reporters: [
     'default',
-    ['jest-stare', {
-      resultDir: './coverage/jest/jest-stare',
-      reportTitle: 'Test Report',
-      additionalResultsProcessors: [],
-    }],
+    [
+      'jest-stare',
+      {
+        resultDir: './coverage/jest/jest-stare',
+        reportTitle: 'Test Report',
+        additionalResultsProcessors: []
+      }
+    ]
   ],
   coverageDirectory: './coverage/jest',
   coverageReporters: ['html', 'lcov', 'text'],
@@ -22,16 +25,12 @@ module.exports = {
   coverageThreshold: {
     global: {
       statements: 85
-    },
+    }
   },
-  roots: [
-    "<rootDir>"
-  ],
-  modulePaths: [
-    "<rootDir>"
-  ],
-  moduleDirectories: [
-    "node_modules"
-  ],
-  testMatch: ['**/*.spec.ts'],
-};
+  roots: ['<rootDir>'],
+  modulePaths: ['<rootDir>'],
+  moduleDirectories: ['node_modules'],
+  testMatch: ['**/*.spec.ts']
+}
+
+
