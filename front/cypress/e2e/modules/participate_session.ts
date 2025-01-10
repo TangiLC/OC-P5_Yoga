@@ -36,6 +36,7 @@ export function participateSession_e2eTest() {
 
       cy.get('button').contains('Participate').click();
       cy.wait('@getSessionDetails1');
+      cy.wait(1000);
       cy.get('button').contains('Do not participate').should('exist');
       cy.get('[data-testid="attendees"]')
         .invoke('text')
