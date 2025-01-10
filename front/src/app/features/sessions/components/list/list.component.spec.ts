@@ -80,7 +80,7 @@ it('1️⃣ should fetch sessions on initialization', () => {
   });
 
   // Integration Tests
-  //@integrat-test
+//@integrat-test
   describe('🔄 Button display logic', () => {
     const scenarios = [
       {

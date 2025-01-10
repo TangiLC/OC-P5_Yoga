@@ -196,10 +196,10 @@ describe('FormComponent', () => {
 
   // Integration Tests
 
-  //@integrat-test
+
   it('🔄 should handle different initialization scenarios correctly', () => {
     const scenarios = [
-      {
+      {//@integrat-test
         description: 'Create mode',
         setup: () => {
           jest
@@ -219,7 +219,7 @@ describe('FormComponent', () => {
           expect(sessionApiServiceMock.detail).not.toHaveBeenCalled();
         },
       },
-      {
+      {//@integrat-test
         description: 'Update mode',
         setup: () => {
           jest
@@ -239,7 +239,7 @@ describe('FormComponent', () => {
           });
         },
       },
-      {
+      {//@integrat-test
         description: 'Non-admin access',
         setup: () => {
           sessionServiceMock.sessionInformation!.admin = false;

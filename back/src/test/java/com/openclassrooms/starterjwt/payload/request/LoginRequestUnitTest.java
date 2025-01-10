@@ -24,7 +24,6 @@ class LoginRequestUnitTest {
       "Null email only, , password123",
       "Null password only, test@test.com, ",
       "Null email and password, , ",
-      
     }
   )
   @DisplayName("Should handle different LoginRequest scenario ")

@@ -73,7 +73,7 @@ it('1️⃣should return a session for detail()', () => {
   });
 
   // Integration Tests
-  //@integrat-test
+
   describe('🔄 API Call Scenarios', () => {
     const scenarios: {
       description: string;
@@ -82,21 +82,21 @@ it('1️⃣should return a session for detail()', () => {
       expectedMethod: string;
       expectedBody: any;
     }[] = [
-      {
+      {//@integrat-test
         description: 'should create a session',
         method: () => service.create(mockSession1),
         expectedUrl: 'api/session',
         expectedMethod: 'POST',
         expectedBody: mockSession1,
       },
-      {
+      {//@integrat-test
         description: 'should delete a session',
         method: () => service.delete('1'),
         expectedUrl: 'api/session/1',
         expectedMethod: 'DELETE',
         expectedBody: null,
       },
-      {
+      {//@integrat-test
         description: 'should update a session',
         method: () =>
           service.update('1', { ...mockSession1, name: 'Updated Session' }),
@@ -104,14 +104,14 @@ it('1️⃣should return a session for detail()', () => {
         expectedMethod: 'PUT',
         expectedBody: { ...mockSession1, name: 'Updated Session' },
       },
-      {
+      {//@integrat-test
         description: 'should participate in a session',
         method: () => service.participate('1', '10'),
         expectedUrl: 'api/session/1/participate/10',
         expectedMethod: 'POST',
         expectedBody: null,
       },
-      {
+      {//@integrat-test
         description: 'should unParticipate from a session',
         method: () => service.unParticipate('1', '10'),
         expectedUrl: 'api/session/1/participate/10',
@@ -131,5 +131,5 @@ it('1️⃣should return a session for detail()', () => {
   });
 });
 
-// UT : 3/4 = 75%
-// IT : 1/4 = 25%
+// UT : 3/8 = 37%
+// IT : 5/8 = 63%

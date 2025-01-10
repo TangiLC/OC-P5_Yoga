@@ -140,11 +140,11 @@ it('🔄should fetch session and teacher details on init', () => {
     expect(component.teacher).toEqual(mockTeacher);
   });
 
-  //@integrat-test
+
 it('🔄should display button and handle click based on role and participation', fakeAsync(() => {
     // Test scenarios
     const scenarios = [
-      {
+      {//@integrat-test
         description: 'Admin user (Delete button)',
         setup: () => {
           sessionServiceMock.sessionInformation!.admin = true;
@@ -165,7 +165,7 @@ it('🔄should display button and handle click based on role and participation',
           expect(routerMock.navigate).toHaveBeenCalledWith(['sessions']);
         },
       },
-      {
+      {//@integrat-test
         description: 'Non-enrolled user (Participate button)',
         setup: () => {
           sessionServiceMock.sessionInformation!.admin = false;
@@ -190,7 +190,7 @@ it('🔄should display button and handle click based on role and participation',
           expect(deleteButton?.textContent?.includes('Delete')).toBeFalsy();
         },
       },
-      {
+      {//@integrat-test
         description: 'Enrolled user (Unparticipate button)',
         setup: () => {
           sessionServiceMock.sessionInformation!.admin = false;
