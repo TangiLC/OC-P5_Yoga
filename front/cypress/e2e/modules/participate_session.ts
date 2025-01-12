@@ -59,7 +59,7 @@ export function participateSession_e2eTest() {
           cy.log(`Initial Attendees: ${initialAttendeeNumber}`);
         });
       cy.get('button').contains('Do not participate').click();
-
+        cy.wait(900)
       cy.get('button').contains('Participate').should('exist');
       cy.get('[data-testid="attendees"]')
         .invoke('text')
@@ -68,15 +68,6 @@ export function participateSession_e2eTest() {
           expect(updatedAttendeeNumber).to.equal(initialAttendeeNumber - 1);
         });
     });
-
-    function setupIntercepts(token) {
-      interceptLoginUser();
-      interceptGetTeachers(token);
-      interceptGetSessions(token);
-      interceptParticipateSession();
-      interceptUnparticipateSession();
-      interceptSessionDetails(token);
-    }
 
     const interceptLoginUser = () => {
       cy.intercept('POST', '/api/auth/login', {

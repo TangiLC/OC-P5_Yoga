@@ -4,7 +4,10 @@ export function registerUser_e2eTest() {
       it('should register successfully with valid inputs', () => {
         cy.visit('/register');
 
-        interceptRegisterSuccess();
+        cy.intercept('POST', '/api/auth/register', {
+          statusCode: 201,
+          body: { message: 'User created successfully' },
+        }).as('registerSuccess');
 
         cy.get('input[formControlName=firstName]').type('John');
         cy.get('input[formControlName=lastName]').type('Doe');
